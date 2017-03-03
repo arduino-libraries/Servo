@@ -65,6 +65,10 @@
 // Pin number of unattached pins
 #define NOT_ATTACHED                    (-1)
 
+#define _Nbr_16timers 14 // mumber of STM32F469 Timers
+#define SERVOS_PER_TIMER 4 // Number of timer channels
+
+
 // Default min/max pulse widths (in microseconds) and angles (in
 // degrees).  Values chosen for Arduino compatibility.  These values
 // are part of the public API; DO NOT CHANGE THEM.
