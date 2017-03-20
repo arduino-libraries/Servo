@@ -24,6 +24,8 @@
  * SOFTWARE.
  *****************************************************************************/
 
+#if defined(ARDUINO_ARCH_STM32F4)
+
 #include "ServoTimers.h"
 
 #include "boards.h"
@@ -188,3 +190,5 @@ void Servo::resetFields(void) {
     this->minPW = MIN_PULSE_WIDTH;
     this->maxPW = MAX_PULSE_WIDTH;
 }
+
+#endif
