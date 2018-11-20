@@ -69,6 +69,8 @@
 #include "stm32f4/ServoTimers.h"
 #elif defined(ARDUINO_ARCH_NRF52)
 #include "nrf52/ServoTimers.h"
+#elif defined(ARDUINO_ARCH_MEGAAVR)
+#include "megaavr/ServoTimers.h"
 #else
 #error "This library only supports boards with an AVR, SAM, SAMD, NRF52 or STM32F4 processor."
 #endif
