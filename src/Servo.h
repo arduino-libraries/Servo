@@ -74,7 +74,7 @@
 #error "This library only supports boards with an AVR, SAM, SAMD, NRF52 or STM32F4 processor."
 #endif
 
-#define Servo_VERSION           2     // software version of this library
+#define Servo_VERSION           3     // software version of this library
 
 #define MIN_PULSE_WIDTH      1000     // the shortest pulse (in us) sent to a servo
 #define MAX_PULSE_WIDTH      2000     // the longest pulse (in us) sent to a servo
