@@ -38,9 +38,6 @@ static volatile int8_t Channel[_Nbr_16timers ];             // counter for the s
 #define SERVO_INDEX(_timer,_channel)  ((_timer*SERVOS_PER_TIMER) + _channel)     // macro to access servo index by timer and channel
 #define SERVO(_timer,_channel)  (servos[SERVO_INDEX(_timer,_channel)])            // macro to access servo class by timer and channel
 
-#define SERVO_MIN() (MIN_PULSE_WIDTH - this->min * 4)  // minimum value in uS for this servo
-#define SERVO_MAX() (MAX_PULSE_WIDTH - this->max * 4)  // maximum value in uS for this servo
-
 /************ static functions common to all instances ***********************/
 
 //------------------------------------------------------------------------------
@@ -202,9 +199,8 @@ uint8_t Servo::attach(int pin, int min, int max)
   if (this->servoIndex < MAX_SERVOS) {
     pinMode(pin, OUTPUT);                                   // set servo pin to output
     servos[this->servoIndex].Pin.nbr = pin;
-    // todo min/max check: abs(min - MIN_PULSE_WIDTH) /4 < 128
-    this->min  = (MIN_PULSE_WIDTH - min)/4; //resolution of min/max is 4 uS
-    this->max  = (MAX_PULSE_WIDTH - max)/4;
+    this->min = min;
+    this->max = max;
     // initialize the timer if it has not already been initialized
     timer = SERVO_INDEX_TO_TIMER(servoIndex);
     if (isTimerActive(timer) == false) {
@@ -228,15 +224,10 @@ void Servo::detach()
 
 void Servo::write(int value)
 {
-  // treat values less than 544 as angles in degrees (valid values in microseconds are handled as microseconds)
-  if (value < MIN_PULSE_WIDTH)
+  // treat values less than the minimum pulse width as angles in degrees (valid values in microseconds are handled as microseconds)
+  if (value < this->min)
   {
-    if (value < 0)
-      value = 0;
-    else if (value > 180)
-      value = 180;
-
-    value = map(value, 0, 180, SERVO_MIN(), SERVO_MAX());
+    value = map(value, 0, 180, this->min, this->max);
   }
   writeMicroseconds(value);
 }
@@ -247,11 +238,7 @@ void Servo::writeMicroseconds(int value)
   byte channel = this->servoIndex;
   if( (channel < MAX_SERVOS) )   // ensure channel is valid
   {
-    if (value < SERVO_MIN())          // ensure pulse width is valid
-      value = SERVO_MIN();
-    else if (value > SERVO_MAX())
-      value = SERVO_MAX();
-
+    value = constrain(value, this->min, this->max); // ensure pulse width is valid
     value = value - TRIM_DURATION;
     value = usToTicks(value);  // convert to ticks after compensating for interrupt overhead
     servos[channel].ticks = value;
@@ -260,7 +247,7 @@ void Servo::writeMicroseconds(int value)
 
 int Servo::read() // return the value as degrees
 {
-  return map(readMicroseconds()+1, SERVO_MIN(), SERVO_MAX(), 0, 180);
+  return map(readMicroseconds()+1, this->min, this->max, 0, 180);
 }
 
 int Servo::readMicroseconds()
@@ -280,4 +267,3 @@ bool Servo::attached()
 }
 
 #endif // ARDUINO_ARCH_SAM
-

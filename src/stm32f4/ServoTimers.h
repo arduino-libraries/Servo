@@ -65,7 +65,7 @@
 // Pin number of unattached pins
 #define NOT_ATTACHED                    (-1)
 
-#define _Nbr_16timers 14 // mumber of STM32F469 Timers
+#define _Nbr_16timers 14 // Number of STM32F469 Timers
 #define SERVOS_PER_TIMER 4 // Number of timer channels
 
 
@@ -75,8 +75,8 @@
 #define MIN_ANGLE               0
 #define MAX_ANGLE             180
 
-#define MIN_PULSE_WIDTH       544     // the shortest pulse sent to a servo
-#define MAX_PULSE_WIDTH      2400     // the longest pulse sent to a servo
+#define MIN_PULSE_WIDTH      1000 // the shortest pulse (in us) sent to a servo
+#define MAX_PULSE_WIDTH      2000 // the longest pulse (in us) sent to a servo
 
 /** Class for interfacing with RC servomotors. */
 class Servo {
@@ -103,12 +103,12 @@ public:
      * @param minPulseWidth Minimum pulse width to write to pin, in
      *                      microseconds.  This will be associated
      *                      with a minAngle degree angle.  Defaults to
-     *                      SERVO_DEFAULT_MIN_PW = 544.
+     *                      MIN_PULSE_WIDTH.
      *
      * @param maxPulseWidth Maximum pulse width to write to pin, in
      *                      microseconds.  This will be associated
      *                      with a maxAngle degree angle. Defaults to
-     *                      SERVO_DEFAULT_MAX_PW = 2400.
+     *                      MAX_PULSE_WIDTH.
      *
      * @param minAngle Target angle (in degrees) associated with
      *                 minPulseWidth.  Defaults to
