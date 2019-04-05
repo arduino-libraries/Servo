@@ -242,11 +242,6 @@ void Servo::write(int value)
   // treat values less than the minimum pulse width as angles in degrees (valid values in microseconds are handled as microseconds)
   if (value < this->min)
   {
-    if (value < 0)
-      value = 0;
-    else if (value > 180)
-      value = 180;
-
     value = map(value, 0, 180, this->min, this->max);
   }
   writeMicroseconds(value);
@@ -258,11 +253,7 @@ void Servo::writeMicroseconds(int value)
   byte channel = this->servoIndex;
   if( (channel < MAX_SERVOS) )   // ensure channel is valid
   {
-    if (value < this->min)          // ensure pulse width is valid
-      value = this->min;
-    else if (value > this->max)
-      value = this->max;
-
+    value = constrain(value, this->min, this->max); // ensure pulse width is valid
     value = value - TRIM_DURATION;
     value = usToTicks(value);  // convert to ticks after compensating for interrupt overhead
     servos[channel].ticks = value;

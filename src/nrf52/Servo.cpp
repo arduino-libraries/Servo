@@ -35,7 +35,7 @@ Servo::Servo()
 {
   if (ServoCount < MAX_SERVOS) {
     this->servoIndex = ServoCount++;                    // assign a servo index to this instance
-  } else {                                                 
+  } else {
     this->servoIndex = INVALID_SERVO;  					// too many servos
   }
 
@@ -43,7 +43,6 @@ Servo::Servo()
 
 uint8_t Servo::attach(int pin)
 {
-	
 	return this->attach(pin, 0, 2500);
 }
 
@@ -57,11 +56,11 @@ uint8_t Servo::attach(int pin, int min, int max)
 
 	if(min < servo_min) min = servo_min;
 	if (max > servo_max) max = servo_max;
-	this->min  = min;
-    this->max  = max;
-	
+	this->min = min;
+	this->max = max;
+
 	servos[this->servoIndex].Pin.isActive = true;
-	
+
   }
   return this->servoIndex;
 }
@@ -73,13 +72,13 @@ void Servo::detach()
 
 
 void Servo::write(int value)
-{  
+{
 	if (value < 0)
 		value = 0;
 	else if (value > 180)
 		value = 180;
 	value = map(value, 0, 180, MIN_PULSE, MAX_PULSE);
-	
+
 	writeMicroseconds(value);
 }
 
@@ -117,7 +116,7 @@ int Servo::read() // return the value as degrees
 }
 
 int Servo::readMicroseconds()
-{	
+{
 	uint8_t channel, instance;
 	uint8_t pin=servos[this->servoIndex].Pin.nbr;
 	instance=(g_APinDescription[pin].ulPWMChannel & 0xF0)/16;

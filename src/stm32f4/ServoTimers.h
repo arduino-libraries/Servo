@@ -65,7 +65,7 @@
 // Pin number of unattached pins
 #define NOT_ATTACHED                    (-1)
 
-#define _Nbr_16timers 14 // mumber of STM32F469 Timers
+#define _Nbr_16timers 14 // Number of STM32F469 Timers
 #define SERVOS_PER_TIMER 4 // Number of timer channels
 
 
