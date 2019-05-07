@@ -24,6 +24,8 @@
 #ifndef __SERVO_TIMERS_H__
 #define __SERVO_TIMERS_H__
 
+#include <avr/io.h>
+
 #define USE_TIMERB1        // interferes with PWM on pin 3
 //#define USE_TIMERB2        // interferes with PWM on pin 11
 //#define USE_TIMERB0        // interferes with PWM on pin 6
