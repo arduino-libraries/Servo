@@ -21,8 +21,19 @@
 #include <Arduino.h>
 #include <Servo.h>
 
-#define usToTicks(_us)    ((clockCyclesPerMicrosecond() * _us) / 16)                 // converts microseconds to tick
-#define ticksToUs(_ticks) (((unsigned) _ticks * 16) / clockCyclesPerMicrosecond())   // converts from ticks back to microseconds
+#if defined(__SAMD51__)
+ // Different prescalers depending on FCPU (avoid overflowing 16-bit counter)
+ #if(F_CPU > 200000000)
+  #define usToTicks(_us)    ((clockCyclesPerMicrosecond() * _us) / 128)
+  #define ticksToUs(_ticks) (((unsigned) _ticks * 128) / clockCyclesPerMicrosecond())
+ #else
+  #define usToTicks(_us)    ((clockCyclesPerMicrosecond() * _us) / 64)
+  #define ticksToUs(_ticks) (((unsigned) _ticks * 64) / clockCyclesPerMicrosecond())
+ #endif
+#else
+ #define usToTicks(_us)    ((clockCyclesPerMicrosecond() * _us) / 16)                 // converts microseconds to tick
+ #define ticksToUs(_ticks) (((unsigned) _ticks * 16) / clockCyclesPerMicrosecond())   // converts from ticks back to microseconds
+#endif
 
 #define TRIM_DURATION  5                                   // compensation ticks to trim adjust for digitalWrite delays
 
@@ -178,9 +189,14 @@ static void _initISR(Tc *tc, uint8_t channel, uint32_t id, IRQn_Type irqn, uint8
     // Set timer counter mode as normal PWM
     tc->COUNT16.WAVE.bit.WAVEGEN = TCC_WAVE_WAVEGEN_NPWM_Val;
 
-    // Set the prescaler factor to GCLK_TC/16.
-    // At nominal 120 MHz GCLK this is 7500 ticks per millisecond.
-    tc->COUNT16.CTRLA.bit.PRESCALER = TCC_CTRLA_PRESCALER_DIV16_Val;
+    // Set the prescaler factor to 64 or 128 depending on FCPU
+    // (avoid overflowing 16-bit clock counter)
+ #if(F_CPU > 200000000)
+    tc->COUNT16.CTRLA.bit.PRESCALER = TCC_CTRLA_PRESCALER_DIV128_Val;
+ #else
+    // At 120-200 MHz GCLK this is 1875-3125 ticks per millisecond
+    tc->COUNT16.CTRLA.bit.PRESCALER = TCC_CTRLA_PRESCALER_DIV64_Val;
+ #endif
 #else
     // Set timer counter mode as normal PWM
     tc->COUNT16.CTRLA.reg |= TC_CTRLA_WAVEGEN_NPWM;
