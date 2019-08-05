@@ -26,8 +26,8 @@
 
 #include <avr/io.h>
 
-#define USE_TIMERB1        // interferes with PWM on pin 3
-//#define USE_TIMERB2        // interferes with PWM on pin 11
+//#define USE_TIMERB1        // interferes with PWM on pin 3
+#define USE_TIMERB2        // interferes with PWM on pin 11
 //#define USE_TIMERB0        // interferes with PWM on pin 6
 
 #if !defined(USE_TIMERB1) && !defined(USE_TIMERB2) && !defined(USE_TIMERB0)
