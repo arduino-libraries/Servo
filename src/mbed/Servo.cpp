@@ -7,7 +7,6 @@ class ServoImpl {
     mbed::DigitalOut   *pin;
     mbed::Timeout      timeout;  // calls a callback once when a timeout expires
     mbed::Ticker       ticker;   // calls a callback repeatedly with a timeout
-    uint32_t           duration;
 
 public:
     ServoImpl(PinName _pin) {
@@ -34,9 +33,7 @@ public:
       *pin = !*pin;
     }
 
-    uint32_t read() {
-      return duration;
-    }
+    int32_t           duration = -1;
 };
 
 static ServoImpl* servos[MAX_SERVOS];                      // static array of servo structures
@@ -107,7 +104,10 @@ void Servo::writeMicroseconds(int value)
       value = SERVO_MAX();
 
     value = value - TRIM_DURATION;
-    servos[this->servoIndex]->start(value);
+    if (servos[this->servoIndex]->duration == -1) {
+      servos[this->servoIndex]->start(value);
+    }
+    servos[this->servoIndex]->duration = value;
   }
 }
 
@@ -121,7 +121,7 @@ int Servo::readMicroseconds()
   if (!servos[this->servoIndex]) {
     return 0;
   }
-  return servos[this->servoIndex]->read();
+  return servos[this->servoIndex]->duration;
 }
 
 bool Servo::attached()
