@@ -169,7 +169,7 @@ static void _initISR(Tc *tc, uint8_t channel, uint32_t id, IRQn_Type irqn, uint8
 {
     // Select GCLK0 as timer/counter input clock source
 #if defined(__SAMD51__)
-    int idx = 30;                    // TC4, TC5
+    int idx = gcmForTimer;           // see datasheet Table 14-9
     GCLK->PCHCTRL[idx].bit.GEN  = 0; // Select GCLK0 as periph clock source
     GCLK->PCHCTRL[idx].bit.CHEN = 1; // Enable peripheral
     while(!GCLK->PCHCTRL[idx].bit.CHEN);

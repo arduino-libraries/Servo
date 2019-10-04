@@ -37,26 +37,51 @@
 //#define _useTimer2   // <- TODO do not activate until the code in Servo.cpp has been changed in order
                        //         to manage more than one channel per timer on the SAMD architecture
 
-#if defined (_useTimer1)
-#define TC_FOR_TIMER1             TC4
-#define CHANNEL_FOR_TIMER1        0
-#define INTENSET_BIT_FOR_TIMER_1  TC_INTENSET_MC0
-#define INTENCLR_BIT_FOR_TIMER_1  TC_INTENCLR_MC0
-#define INTFLAG_BIT_FOR_TIMER_1   TC_INTFLAG_MC0
-#define ID_TC_FOR_TIMER1          ID_TC4
-#define IRQn_FOR_TIMER1           TC4_IRQn
-#define HANDLER_FOR_TIMER1        TC4_Handler
-#define GCM_FOR_TIMER_1           GCM_TC4_TC5
-#endif
-#if defined (_useTimer2)
-#define TC_FOR_TIMER2             TC4
-#define CHANNEL_FOR_TIMER2        1
-#define INTENSET_BIT_FOR_TIMER_2  TC_INTENSET_MC1
-#define INTENCLR_BIT_FOR_TIMER_2  TC_INTENCLR_MC1
-#define ID_TC_FOR_TIMER2          ID_TC4
-#define IRQn_FOR_TIMER2           TC4_IRQn
-#define HANDLER_FOR_TIMER2        TC4_Handler
-#define GCM_FOR_TIMER_2           GCM_TC4_TC5
+#ifdef (__SAMD51__) 
+   #if defined (_useTimer1)
+	#define TC_FOR_TIMER1             TC0
+	#define CHANNEL_FOR_TIMER1        0
+	#define INTENSET_BIT_FOR_TIMER_1  TC_INTENSET_MC0
+	#define INTENCLR_BIT_FOR_TIMER_1  TC_INTENCLR_MC0
+	#define INTFLAG_BIT_FOR_TIMER_1   TC_INTFLAG_MC0
+	#define ID_TC_FOR_TIMER1          ID_TC0
+	#define IRQn_FOR_TIMER1           TC0_IRQn
+	#define HANDLER_FOR_TIMER1        TC0_Handler
+	#define GCM_FOR_TIMER_1           9 // GCLK_TC0
+   #endif
+   #if defined (_useTimer2)
+	#define TC_FOR_TIMER1             TC0
+	#define CHANNEL_FOR_TIMER1        0
+	#define INTENSET_BIT_FOR_TIMER_1  TC_INTENSET_MC1
+	#define INTENCLR_BIT_FOR_TIMER_1  TC_INTENCLR_MC1
+	#define INTFLAG_BIT_FOR_TIMER_1   TC_INTFLAG_MC1
+	#define ID_TC_FOR_TIMER1          ID_TC0
+	#define IRQn_FOR_TIMER1           TC0_IRQn
+	#define HANDLER_FOR_TIMER1        TC0_Handler
+	#define GCM_FOR_TIMER_1           9 // GCLK_TC0
+   #endif
+#else
+   #if defined (_useTimer1)
+	#define TC_FOR_TIMER1             TC4
+	#define CHANNEL_FOR_TIMER1        0
+	#define INTENSET_BIT_FOR_TIMER_1  TC_INTENSET_MC0
+	#define INTENCLR_BIT_FOR_TIMER_1  TC_INTENCLR_MC0
+	#define INTFLAG_BIT_FOR_TIMER_1   TC_INTFLAG_MC0
+	#define ID_TC_FOR_TIMER1          ID_TC4
+	#define IRQn_FOR_TIMER1           TC4_IRQn
+	#define HANDLER_FOR_TIMER1        TC4_Handler
+        #define GCM_FOR_TIMER_1           GCM_TC4_TC5
+   #endif
+   #if defined (_useTimer2)
+	#define TC_FOR_TIMER2             TC4
+	#define CHANNEL_FOR_TIMER2        1
+	#define INTENSET_BIT_FOR_TIMER_2  TC_INTENSET_MC1
+	#define INTENCLR_BIT_FOR_TIMER_2  TC_INTENCLR_MC1
+	#define ID_TC_FOR_TIMER2          ID_TC4
+	#define IRQn_FOR_TIMER2           TC4_IRQn
+	#define HANDLER_FOR_TIMER2        TC4_Handler
+	#define GCM_FOR_TIMER_2           GCM_TC4_TC5
+   #endif
 #endif
 
 typedef enum {
