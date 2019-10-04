@@ -51,7 +51,7 @@
    #endif
    #if defined (_useTimer2)
 	#define TC_FOR_TIMER2             TC0
-	#define CHANNEL_FOR_TIMER2        0
+	#define CHANNEL_FOR_TIMER2        1
 	#define INTENSET_BIT_FOR_TIMER_2  TC_INTENSET_MC1
 	#define INTENCLR_BIT_FOR_TIMER_2  TC_INTENCLR_MC1
 	#define INTFLAG_BIT_FOR_TIMER_2   TC_INTFLAG_MC1
