@@ -93,6 +93,13 @@ void Servo_Handler(timer16_Sequence_t timer, Tc *tc, uint8_t channel, uint8_t in
         }
 
         // Get the counter value
+#if defined(__SAMD51__)
+        // Note from datasheet: Prior to any read access, this register must be synchronized by user by writing the according TC
+        // Command value to the Control B Set register (CTRLBSET.CMD=READSYNC)
+        while (tc->COUNT16.SYNCBUSY.bit.CTRLB);
+	tc->COUNT16.CTRLBSET.bit.CMD = TC_CTRLBSET_CMD_READSYNC_Val;
+        while (tc->COUNT16.SYNCBUSY.bit.CTRLB);
+#endif
         uint16_t tcCounterValue = tc->COUNT16.COUNT.reg;
 #if defined(__SAMD51__)
         while(tc->COUNT16.SYNCBUSY.bit.COUNT);
