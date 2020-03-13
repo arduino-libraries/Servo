@@ -7,8 +7,17 @@
   start from the zero position automatically.
 
   The circuit:
-  - ControlledMovementCircuit.png 'Attached to this folder'
+ * Servo GND pin to ground
+ * Servo power pin to 5V
+ * Servo signal pin to digital pin 9
+ * Button:
+ * Terminal 1b to ground
+ * Terminal 2b to digital pin 2
+ 
+ - A graphical representation of the circuit can be found in cotrolledMotion.png
+ 
   created 12 Mar 2020
+  
   by Mohamed Lotfy
 */
 
