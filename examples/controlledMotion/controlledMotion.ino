@@ -30,8 +30,7 @@ int buttonPin = 2;  // button attached to input pin 2 of the board
 
 
 void setup() {
-  pinMode(buttonPin,HIGH);  // set the button pin in the board to be an input pin
-  digitalWrite(buttonPin,HIGH);
+  pinMode(buttonPin, INPUT_PULLUP);  // set the button pin in the board to be an input pin
   myservo.attach(9);  // attaches the servo on pin 9 to the servo object 
 }
 
