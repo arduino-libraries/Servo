@@ -40,5 +40,5 @@ void loop() {
   if(buttonState == LOW) {  // increment the servo position angle if the button is pressed
     servoPos = (servoPos+1) % 180;  // set the servo position to zero if it exceeds 180 degrees
     delay(50);  // damp the button press effect 
-  }  
+  }
 }
