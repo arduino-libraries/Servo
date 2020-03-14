@@ -24,7 +24,7 @@
 #include <Servo.h>
 
 Servo myservo;  // create servo object to control a servo
-int servoPos;  // variable store the servo position
+int servoPos;  // variable to store the servo position
 int buttonState = 0;  // variable to track the button state
 int buttonPin = 2;  // button attached to input pin 2 of the board
 
