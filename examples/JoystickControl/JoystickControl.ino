@@ -1,56 +1,58 @@
-#include 
-Servo servo1;     // 2 Servos Initialized 
+#include <Servo.h>
+Servo servo1;     // 2 Servos Initialized
 Servo servo2;
-int x_key = A1;     //Horizontal pin for Joystick                                         
-int y_key = A0;     //Vertical pin for Joystick                                         
-int x_pos;
-int y_pos;
-int servo1_pin = 8;   //Signal Pins for Servo
-int servo2_pin = 9;  
-int initial_position = 90;    //Initially Servos are moved to 90
-int initial_position1 = 90;
+int x_Key = A1;     //Horizontal pin for Joystick
+int y_Key = A0;     //Vertical pin for Joystick
+int x_Pos;
+int y_Pos;
+int servo1_Pin = 8;   //Signal Pins for Servo
+int servo2_Pin = 9;
+int initial_Position1 = 90;    //Initially Servos are moved to 90
+int initial_Position2 = 90;
 
-void setup ( ) {
-Serial.begin (9600) ;
-servo1.attach (servo1_pin ) ; 
-servo2.attach (servo2_pin ) ; 
-servo1.write (initial_position);
-servo2.write (initial_position1);
-pinMode (x_key, INPUT) ;                     
-pinMode (y_key, INPUT) ;                      
-}
-
-void loop ( ) {
-x_pos = analogRead (x_key) ;      //read the values for the horizontal and the vertical position from the joystick module 
-y_pos = analogRead (y_key) ;                      
-
-if (x_pos < 300){       //if the value for the horizontal position is less than 300, then the first servo will move towards the right
-if (initial_position < 10) { 
-} else
-{ initial_position = initial_position - 20; servo1.write ( initial_position ) ; delay (100) ; 
-}
-} 
-if (x_pos > 700){       //If the value for the horizontal position is greater than 700, then the servo will move towards the left
-if (initial_position > 180)
-{  
-}  
-else{
-initial_position = initial_position + 20;
-servo1.write ( initial_position ) ;
-delay (100) ;
-}
+void setup() {
+  Serial.begin (9600) ;
+  servo1.attach (servo1_Pin) ;
+  servo2.attach (servo2_Pin) ;
+  servo1.write (initial_Position1);
+  servo2.write (initial_Position2);
+  pinMode (x_Key, INPUT) ;
+  pinMode (y_Key, INPUT) ;
 }
 
-if (y_pos < 300){     // if the value is less than 300, then the second servo will move towards the left
-if (initial_position1 < 10) { } else{ initial_position1 = initial_position1 - 20; servo2.write ( initial_position1 ) ; delay (100) ; } }
-if (y_pos > 700){     //if the value is greater than 700, then the second servo will move towards the right.
-if (initial_position1 > 180)
-{  
-}        
-else{
-initial_position1 = initial_position1 + 20;
-servo2.write ( initial_position1 ) ;
-delay (100) ;
-}
-}
+void loop() {
+  x_Pos = analogRead(x_Key) ;      //read the values for the horizontal and the vertical position from the joystick module
+  y_Pos = analogRead(y_Key) ;
+
+  if (x_Pos < 300) {      //if the value for the horizontal position is less than 300, then the first servo will move towards the right
+    if (initial_Position1 >= 10)
+    { initial_Position1 = initial_Position1 - 20;
+      servo1.write(initial_Position1);
+      delay(100);
+    }
+  }
+  if (x_Pos > 700) {      //If the value for the horizontal position is greater than 700, then the servo will move towards the left
+    if (initial_Position1 <= 180)
+    {
+      initial_Position1 = initial_Position1 + 20;
+      servo1.write(initial_Position1);
+      delay (100);
+    }
+  }
+
+  if (y_Pos < 300) {   // if the value is less than 300, then the second servo will move towards the left
+    if (initial_Position2 >= 10) {
+      initial_Position2 = initial_Position2 - 20;
+      servo2.write (initial_Position2);
+      delay (100);
+    }
+  }
+  if (y_Pos > 700) {   //if the value is greater than 700, then the second servo will move towards the right.
+    if (initial_Position2 <= 180)
+    {
+      initial_Position2 = initial_Position2 + 20;
+      servo2.write(initial_Position2);
+      delay(100);
+    }
+  }
 }
