@@ -4,7 +4,6 @@
 
  modified 18 Mar 2020
  by S Jeeva
- http://www.arduino.cc/en/Tutorial/Sweep
 */
 
 #include <Servo.h>
