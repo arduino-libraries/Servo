@@ -1,4 +1,4 @@
-/* Sweep
+/* Read
  by BARRAGAN <http://barraganstudio.com>
  This example code is in the public domain.
 
