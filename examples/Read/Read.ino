@@ -2,6 +2,8 @@
  by BARRAGAN <http://barraganstudio.com>
  This example code is in the public domain.
 
+ Example to sweep and display the angle in Serial Monitor
+ 
  modified 18 Mar 2020
  by S Jeeva
 */
