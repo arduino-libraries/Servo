@@ -13,6 +13,7 @@ int pos = 0;    // initial Position of the Shaft (max is 180)
 
 void setup() {
   myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+  Serial.begin(9600);  //opens serial port, sets data rate to 9600 bps
   Serial.println("Enter Position from 1 to 180"); 
 }
 
