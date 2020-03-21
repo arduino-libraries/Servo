@@ -5,12 +5,12 @@
 
 #include <Servo.h>
 
-Servo myservo;  // create servo object to control a servo
+Servo myservo;  // create Servo object to control a servo motor
 
 long pos = 0;    // initial position of the shaft (max is 180)
 
 void setup() {
-  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+  myservo.attach(9);  // attaches the servo on pin 9 to the Servo object
   Serial.begin(9600);  //opens serial port, sets data rate to 9600 bps
   Serial.println("Enter Position from 1 to 180"); 
 }
