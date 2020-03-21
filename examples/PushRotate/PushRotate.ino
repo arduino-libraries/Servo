@@ -4,9 +4,10 @@
 
   Circuit:-
     Arduino Uno
-    Micro Servo Motor connected at pin no 9
-    push button1 at pin no 6 with 220 Ohm Resistor(rotate anti-clockwise)
-    push button2 at pin no 7 with 220 Ohm Resistor(rotate clockwise)
+    Micro Servo Motor connected at pin 9
+    push button1 between pin 6 and VCC with 220 Ohm pull-down resistor(rotate anti-clockwise)
+    push button2 between pin 7 and VCC with 220 Ohm pull-down resistor(rotate clockwise)
+
 */
 
 #include <Servo.h>
@@ -18,7 +19,7 @@ void setup() {
   Serial.begin(9600);
   pinMode(6, INPUT);                                //Input button1
   pinMode(7, INPUT);                                //Input button2
-  Smotor.attach(9);                                 //Servo Motor connected at pin no 9
+  Smotor.attach(9);                                 //Servo Motor connected at pin 9
   Smotor.write(90);
 }
 
@@ -27,13 +28,13 @@ void loop() {
   if (digitalRead(6) == HIGH)
   {
     pos = pos + angle;
-    Smotor.write(pos);                                   // rotates servo motor anti-clockwise                              
+    Smotor.write(pos);                                   // rotates servo motor anti-clockwise
   }
-  delay(100);
+
   if (digitalRead(7) == HIGH)
   {
     pos = pos - angle;
-    Smotor.write(pos);                                  //rotates servo motor clockwise 
+    Smotor.write(pos);                                  //rotates servo motor clockwise
   }
   delay(100);
 
