@@ -6,7 +6,6 @@
 #include <Servo.h>
 
 Servo myservo;  // create Servo object to control a servo motor
-
 long pos = 0;    // initial position of the shaft (max is 180)
 
 void setup() {
