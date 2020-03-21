@@ -15,8 +15,12 @@ void setup() {
 }
 
 void loop() {
-  if(Serial.available() > 0){        // checks if there is any input on the serial monitor
+  if(Serial.available()){        // checks if there is any input on the serial monitor
     pos = Serial.parseInt();         // Reading the input from the serial monitor and storing it in'pos'
+    delay(2);                        // wait for all the serial data to come in
+    while (Serial.available()) {     // dump line endings from the received data
+      Serial.read();
+    }
     myservo.write(pos);              // tell servo to go to that position 
   }
 }
