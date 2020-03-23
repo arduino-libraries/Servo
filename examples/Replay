@@ -1,5 +1,6 @@
 /*
- Recording sensory input using a potentiometer and replaying it through a servo.
+ This example records sensory input from a potentiometer and stores it in EEPROM. 
+ The servo replays the actions recorded on the potentiometer. 
  
  Circuit: 
   - potentiometer is connected to pin A0
