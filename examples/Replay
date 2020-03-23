@@ -5,6 +5,8 @@ Servo myServo;        // create Servo object to control a servo
 
 bool record = false;  // boolean to determine if recording is taking place
 int potPin = 0;       // analog pin used to connect the potentiometer
+int buttonPin = 13;   // analog pin used to connect the button
+int servoPin = 9;     // analog pin used to connect the Servo
 int val;              // variable to read the value from the analog pin
 int read;             // variable to read the data from memory
 
