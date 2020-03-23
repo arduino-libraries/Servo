@@ -1,7 +1,7 @@
 #include <Servo.h>
 #include <EEPROM.h>
 
-Servo myServo;        // create servo object to control a servo
+Servo myServo;        // create Servo object to control a servo
 
 bool record = false;  // boolean to determine if recording is taking plce
 int potpin = 0;       // analog pin used to connect the potentiometer
