@@ -33,7 +33,7 @@ void loop() {
   else {
     for (int i = 1; i < EEPROM.length(); i++) {
       // returns to record if button is pressed
-      if (digitalRead(13) == 0) {
+      if (digitalRead(buttonPin) == LOW) {
         record = true;                    // sets record to true in order to go to rerecord the data
         break;                            
       }
