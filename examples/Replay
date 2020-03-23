@@ -1,3 +1,8 @@
+/*
+ Recording sensory input using a potentiometer and replaying it on a servo.
+ by Khushi Wadhwa
+*/
+
 #include <Servo.h>
 #include <EEPROM.h>
 
