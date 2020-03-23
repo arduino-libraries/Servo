@@ -1,6 +1,12 @@
 /*
- Recording sensory input using a potentiometer and replaying it on a servo.
- by Khushi Wadhwa
+ Recording sensory input using a potentiometer and replaying it through a servo.
+ 
+ Circuit: 
+  - potentiometer is connected to pin A0
+  - button is connected to pin D13
+  - servo is connected to pin D9
+  
+ by Khushi Wadhwa <https://github.com/khushi02>
 */
 
 #include <Servo.h>
@@ -10,8 +16,8 @@ Servo myServo;        // create Servo object to control a servo
 
 bool record = false;  // boolean to determine if recording is taking place
 int potPin = 0;       // analog pin used to connect the potentiometer
-int buttonPin = 13;   // analog pin used to connect the button
-int servoPin = 9;     // analog pin used to connect the servo
+int buttonPin = 13;   // digital pin used to connect the button
+int servoPin = 9;     // digital pin used to connect the servo
 int val;              // variable to read the value from the analog pin
 int read;             // variable to read the data from memory
 
