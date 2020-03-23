@@ -31,7 +31,7 @@ void loop() {
   }
   // begin replay on servo
   else {
-    for (int i = 1; i <= EEPROM.length(); i++) {
+    for (int i = 1; i < EEPROM.length(); i++) {
       // returns to record if button is pressed
       if (digitalRead(13) == 0) {
         record = true;                    // sets record to true in order to go to rerecord the data
