@@ -1,9 +1,9 @@
 /*
-  Setting servo position to 0 whenever any object distance
-  with the ultrasonic sensor is less than 17cm. Setting Servo position to 90 otherwise
+  Set servo position to 0 when the ultrasonic sensor detects any object closer
+  than 17cm. Otherwise, set servo position to 90.
   by Madhur Dixit https://github.com/Chester-King
 
-  You can see the detailed description and required circuit for the sketch at https://gist.github.com/Chester-King/fc19b83777ff629b6708731f09eeaa6c  
+  You can see the detailed description at https://github.com/arduino-libraries/Servo/blob/master/examples/ServoStop/ServoStop.md  
 */
 
 
