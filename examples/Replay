@@ -13,8 +13,6 @@ int read;             // variable to read the data from memory
 void setup() {
   pinMode(buttonPin, INPUT_PULLUP); // configure the button's pin
   myServo.attach(servoPin);   // attaches the servo pin to the Servo object
-
-  Serial.begin(9600);
   digitalWrite(13, HIGH);
 }
 
