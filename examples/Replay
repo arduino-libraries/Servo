@@ -6,7 +6,7 @@ Servo myServo;        // create Servo object to control a servo
 bool record = false;  // boolean to determine if recording is taking place
 int potPin = 0;       // analog pin used to connect the potentiometer
 int buttonPin = 13;   // analog pin used to connect the button
-int servoPin = 9;     // analog pin used to connect the Servo
+int servoPin = 9;     // analog pin used to connect the servo
 int val;              // variable to read the value from the analog pin
 int read;             // variable to read the data from memory
 
@@ -21,7 +21,7 @@ void loop() {
     for (int i = 1; i < EEPROM.length(); i++) {
       val = analogRead(potPin);            // reads the value of the potentiometer (value between 0 and 1023)
       val = map(val, 0, 1023, 0, 180);     // scales it to use it with the servo (value between 0 and 180)
-
+      
       EEPROM.write(i, val);                // stores data in memory
       myServo.write(val);                  // sets the servo position according to the scaled value
       delay(15);                           // waits for the servo to get there
