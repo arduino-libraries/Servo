@@ -1,9 +1,18 @@
 /*
   Set servo position to 0 when the ultrasonic sensor detects any object closer
   than 17cm. Otherwise, set servo position to 90.
-  by Madhur Dixit https://github.com/Chester-King
+  
 
   You can see the detailed description at https://github.com/arduino-libraries/Servo/blob/master/examples/ServoStop/ServoStop.md  
+
+  The circuit:
+  - Ultrasonic Trig pin to digital pin 3 on arduino
+  - Ultrasonic Echo pin to digital pin 2 on arduino
+  - Servo pin to digital pin 4 on arduino
+
+  Example originally added on 21-03-2020
+  by Madhur Dixit https://github.com/Chester-King
+  
 */
 
 
