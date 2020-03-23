@@ -9,7 +9,7 @@ int val;              // variable to read the value from the analog pin
 int read;             // variable to read the data from memory
 
 void setup() {
-  pinMode(13, OUTPUT); // button on pin 2
+  pinMode(buttonPin, INPUT_PULLUP); // configure the button's pin
   myServo.attach(9);   // attaches the servo on pin 9 to the servo object
 
   Serial.begin(9600);
