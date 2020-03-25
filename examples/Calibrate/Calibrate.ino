@@ -1,6 +1,6 @@
 /* Calibrate
   This code allows you to calibrate your servo motor using the serial monitor
-  Enter the degree in the serial monitor
+  Enter the angle in the serial monitor
   by Divyansh Khandelwal <github.com/noob-master147>
   This example code is in the public domain.
 
