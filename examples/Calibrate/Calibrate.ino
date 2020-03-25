@@ -17,15 +17,20 @@ int servoPin = 11; // the Arduino pin the servo is attached to
 void setup() {
   myservo.attach(servoPin); // attaches the servo on servoPin to the servo object
   Serial.begin(9600);
+  Serial.println("Enter The Angle from 0 to 180");
 }
 
 void loop() {
-if (Serial.available() > 0) {
+  if (Serial.available() > 0) {
     input = Serial.parseInt();        // reads the value from Serial
+    while (Serial.available()) {      // remove the line endings
+      Serial.read();
+    }
     myservo.write(input);             // sets the servo position 
+    delay (50);
     Serial.print("Servo set to ");
     Serial.print(input);
     Serial.println(" degree");
-    delay (1000);
+    
   }
 }
