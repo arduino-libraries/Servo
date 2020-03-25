@@ -1,16 +1,16 @@
 /* Calibrate
-This code allows to calibrate your servo motor using the serial monitor
-Enter the degree in the serial monitor
- by Divyansh Khandelwal <github.com/noob-master147>
- This example code is in the public domain.
+  This code allows to calibrate your servo motor using the serial monitor
+  Enter the degree in the serial monitor
+  by Divyansh Khandelwal <github.com/noob-master147>
+  This example code is in the public domain.
 
- modified 24th March 2020
- by Divyansh Khandelwal
+  modified 24th March 2020
+  by Divyansh Khandelwal
 */
 
 #include <Servo.h>
 Servo myservo;     // create servo object to control a servo
-int input;         // variable to read the value from the Serial Monitor 
+int input;         // variable to read the value from the Serial Monitor
 int servoPin = 11; // the Arduino pin the servo is attached to
 
 
@@ -26,11 +26,11 @@ void loop() {
     while (Serial.available()) {      // remove the line endings
       Serial.read();
     }
-    myservo.write(input);             // sets the servo position 
+    myservo.write(input);             // sets the servo position
     delay (50);
     Serial.print("Servo set to ");
     Serial.print(input);
     Serial.println(" degree");
-    
+
   }
 }
