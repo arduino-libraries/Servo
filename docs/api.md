@@ -165,17 +165,17 @@ servo.attached()
 
 Detach the Servo variable from its pin. If all Servo variables are detached, then pins 9 and 10 can be used for PWM output with [analogWrite()](#analogwrite).
 
-### Syntax
+#### Syntax
 
 ```
 servo.detach()
 ```
 
-### Parameters
+#### Parameters
 
 * _servo_: a variable of type `Servo`
 
-### See also
+#### See also
 
 * [attach()](#attach)
 * [attached()](#attached)
