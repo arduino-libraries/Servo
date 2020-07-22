@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include <Servo.h>
+#include <mbed.h>
 
 class ServoImpl {
     mbed::DigitalOut   *pin;
