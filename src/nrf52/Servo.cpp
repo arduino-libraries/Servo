@@ -88,13 +88,13 @@ void Servo::writeMicroseconds(int value)
 {
 	uint8_t channel, instance;
 	uint8_t pin = servos[this->servoIndex].Pin.nbr;
-	//instance of pwm module is MSB - look at VWariant.h
+	//instance of PWM module is MSB - look at VWariant.h
 	instance=(g_APinDescription[pin].ulPWMChannel & 0xF0)/16;
-	//index of pwm channel is LSB - look at VWariant.h
+	//index of PWM channel is LSB - look at VWariant.h
 	channel=g_APinDescription[pin].ulPWMChannel & 0x0F;
 	group_pins[instance][channel]=g_APinDescription[pin].ulPin;
 	NRF_PWM_Type * PWMInstance = instance == 0 ? NRF_PWM0 : (instance == 1 ? NRF_PWM1 : NRF_PWM2);
-	//configure pwm instance and enable it
+	//configure PWM instance and enable it
 	seq_values[instance][channel]= value | 0x8000;
 	nrf_pwm_sequence_t const seq={
 								seq_values[instance],
