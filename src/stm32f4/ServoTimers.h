@@ -56,7 +56,7 @@
  * and 0 on failure, this one returns true on success and false on
  * failure.
  *
- * RC Servos expect a pulse every 20ms.  Since periods are set for
+ * RC Servos expect a pulse every 20 ms.  Since periods are set for
  * entire timers, rather than individual channels, attach()ing a Servo
  * to a pin can interfere with other pins associated with the same
  * timer.  As always, your board's pin map is your friend.
@@ -65,7 +65,7 @@
 // Pin number of unattached pins
 #define NOT_ATTACHED                    (-1)
 
-#define _Nbr_16timers 14 // mumber of STM32F469 Timers
+#define _Nbr_16timers 14 // Number of STM32F469 Timers
 #define SERVOS_PER_TIMER 4 // Number of timer channels
 
 

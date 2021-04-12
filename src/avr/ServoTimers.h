@@ -18,7 +18,7 @@
 */
 
 /*
- * Defines for 16 bit timers used with  Servo library
+ * Defines for 16 bit timers used with Servo library
  *
  * If _useTimerX is defined then TimerX is a 16 bit timer on the current board
  * timer16_Sequence_t enumerates the sequence that the timers should be allocated
@@ -56,4 +56,3 @@ typedef enum { _timer3, _timer1, _Nbr_16timers } timer16_Sequence_t;
 #define _useTimer1
 typedef enum { _timer1, _Nbr_16timers } timer16_Sequence_t;
 #endif
-

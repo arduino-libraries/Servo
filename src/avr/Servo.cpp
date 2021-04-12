@@ -44,8 +44,8 @@ uint8_t ServoCount = 0;                                     // the total number 
 #define SERVO_INDEX(_timer,_channel)  ((_timer*SERVOS_PER_TIMER) + _channel)     // macro to access servo index by timer and channel
 #define SERVO(_timer,_channel)  (servos[SERVO_INDEX(_timer,_channel)])            // macro to access servo class by timer and channel
 
-#define SERVO_MIN() (MIN_PULSE_WIDTH - this->min * 4)  // minimum value in uS for this servo
-#define SERVO_MAX() (MAX_PULSE_WIDTH - this->max * 4)  // maximum value in uS for this servo
+#define SERVO_MIN() (MIN_PULSE_WIDTH - this->min * 4)  // minimum value in us for this servo
+#define SERVO_MAX() (MAX_PULSE_WIDTH - this->max * 4)  // maximum value in us for this servo
 
 /************ static functions common to all instances ***********************/
 
@@ -129,11 +129,11 @@ static void initISR(timer16_Sequence_t timer)
     TCCR1B = _BV(CS11);     // set prescaler of 8
     TCNT1 = 0;              // clear the timer count
 #if defined(__AVR_ATmega8__)|| defined(__AVR_ATmega128__)
-    TIFR |= _BV(OCF1A);      // clear any pending interrupts;
+    TIFR |= _BV(OCF1A);      // clear any pending interrupts
     TIMSK |=  _BV(OCIE1A) ;  // enable the output compare interrupt
 #else
     // here if not ATmega8 or ATmega128
-    TIFR1 |= _BV(OCF1A);     // clear any pending interrupts;
+    TIFR1 |= _BV(OCF1A);     // clear any pending interrupts
     TIMSK1 |=  _BV(OCIE1A) ; // enable the output compare interrupt
 #endif
 #if defined(WIRING)
@@ -148,10 +148,10 @@ static void initISR(timer16_Sequence_t timer)
     TCCR3B = _BV(CS31);     // set prescaler of 8
     TCNT3 = 0;              // clear the timer count
 #if defined(__AVR_ATmega128__)
-    TIFR |= _BV(OCF3A);     // clear any pending interrupts;
+    TIFR |= _BV(OCF3A);     // clear any pending interrupts
 	ETIMSK |= _BV(OCIE3A);  // enable the output compare interrupt
 #else
-    TIFR3 = _BV(OCF3A);     // clear any pending interrupts;
+    TIFR3 = _BV(OCF3A);     // clear any pending interrupts
     TIMSK3 =  _BV(OCIE3A) ; // enable the output compare interrupt
 #endif
 #if defined(WIRING)
@@ -165,7 +165,7 @@ static void initISR(timer16_Sequence_t timer)
     TCCR4A = 0;             // normal counting mode
     TCCR4B = _BV(CS41);     // set prescaler of 8
     TCNT4 = 0;              // clear the timer count
-    TIFR4 = _BV(OCF4A);     // clear any pending interrupts;
+    TIFR4 = _BV(OCF4A);     // clear any pending interrupts
     TIMSK4 =  _BV(OCIE4A) ; // enable the output compare interrupt
   }
 #endif
@@ -175,7 +175,7 @@ static void initISR(timer16_Sequence_t timer)
     TCCR5A = 0;             // normal counting mode
     TCCR5B = _BV(CS51);     // set prescaler of 8
     TCNT5 = 0;              // clear the timer count
-    TIFR5 = _BV(OCF5A);     // clear any pending interrupts;
+    TIFR5 = _BV(OCF5A);     // clear any pending interrupts
     TIMSK5 =  _BV(OCIE5A) ; // enable the output compare interrupt
   }
 #endif
@@ -202,7 +202,7 @@ static void finISR(timer16_Sequence_t timer)
     timerDetach(TIMER3OUTCOMPAREA_INT);
   }
 #else
-  //For arduino - in future: call here to a currently undefined function to reset the timer
+  //For Arduino - in future: call here to a currently undefined function to reset the timer
   (void) timer;  // squash "unused parameter 'timer' [-Wunused-parameter]" warning
 #endif
 }
@@ -241,7 +241,7 @@ uint8_t Servo::attach(int pin, int min, int max)
     pinMode( pin, OUTPUT) ;                                   // set servo pin to output
     servos[this->servoIndex].Pin.nbr = pin;
     // todo min/max check: abs(min - MIN_PULSE_WIDTH) /4 < 128
-    this->min  = (MIN_PULSE_WIDTH - min)/4; //resolution of min/max is 4 uS
+    this->min  = (MIN_PULSE_WIDTH - min)/4; //resolution of min/max is 4 us
     this->max  = (MAX_PULSE_WIDTH - max)/4;
     // initialize the timer if it has not already been initialized
     timer16_Sequence_t timer = SERVO_INDEX_TO_TIMER(servoIndex);
@@ -315,4 +315,3 @@ bool Servo::attached()
 }
 
 #endif // ARDUINO_ARCH_AVR
-

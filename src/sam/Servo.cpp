@@ -38,8 +38,8 @@ static volatile int8_t Channel[_Nbr_16timers ];             // counter for the s
 #define SERVO_INDEX(_timer,_channel)  ((_timer*SERVOS_PER_TIMER) + _channel)     // macro to access servo index by timer and channel
 #define SERVO(_timer,_channel)  (servos[SERVO_INDEX(_timer,_channel)])            // macro to access servo class by timer and channel
 
-#define SERVO_MIN() (MIN_PULSE_WIDTH - this->min * 4)  // minimum value in uS for this servo
-#define SERVO_MAX() (MAX_PULSE_WIDTH - this->max * 4)  // maximum value in uS for this servo
+#define SERVO_MIN() (MIN_PULSE_WIDTH - this->min * 4)  // minimum value in us for this servo
+#define SERVO_MAX() (MAX_PULSE_WIDTH - this->max * 4)  // maximum value in us for this servo
 
 /************ static functions common to all instances ***********************/
 
@@ -112,7 +112,7 @@ static void _initISR(Tc *tc, uint32_t channel, uint32_t id, IRQn_Type irqn)
             TC_CMR_WAVE |                // Waveform mode
             TC_CMR_WAVSEL_UP_RC );       // Counter running up and reset when equals to RC
 
-    /* 84MHz, MCK/32, for 1.5ms: 3937 */
+    /* 84 MHz, MCK/32, for 1.5 ms: 3937 */
     TC_SetRA(tc, channel, 2625); // 1ms
 
     /* Configure and enable interrupt */
@@ -203,7 +203,7 @@ uint8_t Servo::attach(int pin, int min, int max)
     pinMode(pin, OUTPUT);                                   // set servo pin to output
     servos[this->servoIndex].Pin.nbr = pin;
     // todo min/max check: abs(min - MIN_PULSE_WIDTH) /4 < 128
-    this->min  = (MIN_PULSE_WIDTH - min)/4; //resolution of min/max is 4 uS
+    this->min  = (MIN_PULSE_WIDTH - min)/4; //resolution of min/max is 4 us
     this->max  = (MAX_PULSE_WIDTH - max)/4;
     // initialize the timer if it has not already been initialized
     timer = SERVO_INDEX_TO_TIMER(servoIndex);
@@ -280,4 +280,3 @@ bool Servo::attached()
 }
 
 #endif // ARDUINO_ARCH_SAM
-
