@@ -4,7 +4,7 @@
 
 ### `attach()`
 
-Attach the Servo variable to a pin. Note that in Arduino 0016 and earlier, the Servo library supports only servos on only two pins: 9 and 10.
+Attach the Servo variable to a pin. Note that in Arduino 0016 and earlier, the Servo library supports servos on only two pins: 9 and 10.
 
 #### Syntax
 
@@ -17,8 +17,8 @@ servo.attach(pin, min, max)
 
 * _servo_: a variable of type `Servo`
 * _pin_: the number of the pin that the servo is attached to
-* _min_ (optional): the pulse width, in microseconds, corresponding to the minimum (0-degree) angle on the servo (defaults to 544)
-* _max_ (optional): the pulse width, in microseconds, corresponding to the maximum (180-degree) angle on the servo (defaults to 2400)
+* _min_ (optional): the pulse width, in microseconds, corresponding to the minimum (0 degree) angle on the servo (defaults to 544)
+* _max_ (optional): the pulse width, in microseconds, corresponding to the maximum (180 degree) angle on the servo (defaults to 2400)
 
 #### Example
 
@@ -77,7 +77,7 @@ void loop() {}
 
 ### `writeMicroseconds()`
 
-Writes a value in microseconds (uS) to the servo, controlling the shaft accordingly. On a standard servo, this will set the angle of the shaft. On standard servos a parameter value of 1000 is fully counter-clockwise, 2000 is fully clockwise, and 1500 is in the middle.
+Writes a value in microseconds (us) to the servo, controlling the shaft accordingly. On a standard servo, this will set the angle of the shaft. On standard servos a parameter value of 1000 is fully counter-clockwise, 2000 is fully clockwise, and 1500 is in the middle.
 
 Note that some manufactures do not follow this standard very closely so that servos often respond to values between 700 and 2300. Feel free to increase these endpoints until the servo no longer continues to increase its range. Note however that attempting to drive a servo past its endpoints (often indicated by a growling sound) is a high-current state, and should be avoided.
 
@@ -86,13 +86,13 @@ Continuous-rotation servos will respond to the writeMicrosecond function in an a
 #### Syntax
 
 ````
-servo.writeMicroseconds(uS)
+servo.writeMicroseconds(us)
 ````
 
 #### Parameters
 
 * _servo_: a variable of type Servo
-* _uS_: the value of the parameter in microseconds (int)
+* _us_: the value of the parameter in microseconds (int)
 
 #### Example
 
@@ -163,7 +163,7 @@ servo.attached()
 
 ### `detach()`
 
-Detach the Servo variable from its pin. If all Servo variables are detached, then pins 9 and 10 can be used for PWM output with [analogWrite()](#analogwrite).
+Detach the Servo variable from its pin. If all Servo variables are detached, then pins 9 and 10 can be used for PWM output with [analogWrite()](https://www.arduino.cc/reference/en/language/functions/analog-io/analogwrite/).
 
 #### Syntax
 

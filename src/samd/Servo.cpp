@@ -38,8 +38,8 @@ static volatile int8_t currentServoIndex[_Nbr_16timers];   // index for the serv
 #define SERVO_INDEX(_timer,_channel)  ((_timer*SERVOS_PER_TIMER) + _channel)                     // macro to access servo index by timer and channel
 #define SERVO(_timer,_channel)  (servos[SERVO_INDEX(_timer,_channel)])                           // macro to access servo class by timer and channel
 
-#define SERVO_MIN() (MIN_PULSE_WIDTH - this->min * 4)   // minimum value in uS for this servo
-#define SERVO_MAX() (MAX_PULSE_WIDTH - this->max * 4)   // maximum value in uS for this servo
+#define SERVO_MIN() (MIN_PULSE_WIDTH - this->min * 4)   // minimum value in us for this servo
+#define SERVO_MAX() (MAX_PULSE_WIDTH - this->max * 4)   // maximum value in us for this servo
 
 #define WAIT_TC16_REGS_SYNC(x) while(x->COUNT16.STATUS.bit.SYNCBUSY);
 
@@ -133,7 +133,7 @@ static void _initISR(Tc *tc, uint8_t channel, uint32_t id, IRQn_Type irqn, uint8
     // Set timer counter mode as normal PWM
     tc->COUNT16.CTRLA.reg |= TC_CTRLA_WAVEGEN_NPWM;
 
-    // Set the prescaler factor to GCLK_TC/16.  At nominal 48MHz GCLK_TC this is 3000 ticks per millisecond
+    // Set the prescaler factor to GCLK_TC/16.  At nominal 48 MHz GCLK_TC this is 3000 ticks per millisecond
     tc->COUNT16.CTRLA.reg |= TC_CTRLA_PRESCALER_DIV16;
 
     // Count up
@@ -218,7 +218,7 @@ uint8_t Servo::attach(int pin, int min, int max)
     pinMode(pin, OUTPUT);                                   // set servo pin to output
     servos[this->servoIndex].Pin.nbr = pin;
     // todo min/max check: abs(min - MIN_PULSE_WIDTH) /4 < 128
-    this->min  = (MIN_PULSE_WIDTH - min)/4; //resolution of min/max is 4 uS
+    this->min  = (MIN_PULSE_WIDTH - min)/4; //resolution of min/max is 4 us
     this->max  = (MAX_PULSE_WIDTH - max)/4;
     // initialize the timer if it has not already been initialized
     timer = SERVO_INDEX_TO_TIMER(servoIndex);

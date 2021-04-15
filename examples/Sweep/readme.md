@@ -10,7 +10,7 @@ Sweeps the shaft of a RC [servo motor](http://en.wikipedia.org/wiki/Servo_motor#
 
 ## Circuit
 
-Servo motors have three wires: power, ground, and signal. The power wire is typically red, and should be connected to the 5V pin on the Arduino or Genuino board. The ground wire is typically black or brown and should be connected to a ground pin on the board. The signal pin is typically yellow, orange or white and should be connected to pin 9 on the board.
+Servo motors have three wires: power, ground, and signal. The power wire is typically red, and should be connected to the 5V pin on the Arduino board. The ground wire is typically black or brown and should be connected to a ground pin on the board. The signal pin is typically yellow, orange or white and should be connected to pin 9 on the board.
 
 ![](images/sweep_bb.png)
 
@@ -26,4 +26,4 @@ Servo motors have three wires: power, ground, and signal. The power wire is typi
 * [write()](/docs/api.md#write)
 * [map()](https://www.arduino.cc/en/Reference/Map)
 * [Servo library reference](/docs/readme.md)
-* [Knob](../Knob) - Sweep the shaft of a servo motor back and forth
+* [Knob](../Knob) - Control the position of a servo with a potentiometer
