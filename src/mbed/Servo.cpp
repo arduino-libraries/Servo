@@ -4,6 +4,12 @@
 #include <Servo.h>
 #include <mbed.h>
 
+#if defined __has_include
+#  if __has_include ("pinDefinitions.h")
+#    include "pinDefinitions.h"
+#  endif
+#endif
+
 class ServoImpl {
     mbed::DigitalOut   *pin;
     mbed::Timeout      timeout;  // calls a callback once when a timeout expires
