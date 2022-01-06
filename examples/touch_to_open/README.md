@@ -22,3 +22,5 @@ Servo motors have three wires: power, ground, and signal. The power wire is typi
 ![](images/Touch_to_open_schem.JPG)
 
 
+
+
