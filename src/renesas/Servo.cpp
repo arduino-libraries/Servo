@@ -26,6 +26,7 @@
 #include "Servo.h"
 #include "ServoTimers.h"
 #include "math.h"
+#include "FspTimer.h"
 
 #define SERVO_MAX_SERVOS            (_Nbr_16timers  * SERVOS_PER_TIMER)
 #define SERVO_INVALID_INDEX         (255)
@@ -52,33 +53,36 @@ typedef struct {
 // Keep track of the total number of servos attached.
 static size_t n_servos=0;
 static ra_servo_t ra_servos[SERVO_MAX_SERVOS];
+
+static FspTimer servo_timer;
 static bool servo_timer_started = false;
+void servo_timer_callback(timer_callback_args_t *args);
 
 static int servo_timer_config(uint32_t period_us)
 {
     static bool configured = false;
-
     if (configured == false) {
         // Configure and enable the servo timer.
-        uint32_t clksrc_div = servo_timer_cfg.source_div;
-        uint32_t freq_hz = R_FSP_SystemClockHzGet(FSP_PRIV_CLOCK_PCLKB) >> clksrc_div;
-        uint32_t period_counts = freq_hz / (1000000 / period_us);
-        if (R_AGT_Open(&servo_timer_ctrl, &servo_timer_cfg)   != FSP_SUCCESS ||
-            R_AGT_PeriodSet(&servo_timer_ctrl, period_counts) != FSP_SUCCESS ||
-            R_AGT_Enable(&servo_timer_ctrl)                   != FSP_SUCCESS) {
-            return -1;
+        uint8_t type = 0;
+        int8_t channel = FspTimer::get_available_timer(type);
+        if (channel != -1) {
+            servo_timer.begin(TIMER_MODE_PERIODIC, type, channel,
+                    1000000.0f/period_us, 50.0f, servo_timer_callback, nullptr);
+            servo_timer.setup_overflow_irq();
+            servo_timer.open();
+            servo_timer.stop();
+            configured = true;
         }
-        configured = true;
     }
-    return 0;
+    return configured ? 0 : -1;
 }
 
 static int servo_timer_start()
 {
     // Start the timer if it's not started
     if (servo_timer_started == false &&
-        R_AGT_Start(&servo_timer_ctrl) != FSP_SUCCESS) {
-        return 0;
+            servo_timer.start() == false) {
+        return -1;
     }
     servo_timer_started = true;
     return 0;
@@ -88,8 +92,8 @@ static int servo_timer_stop()
 {
     // Start the timer if it's not started
     if (servo_timer_started == true &&
-        R_AGT_Stop(&servo_timer_ctrl) != FSP_SUCCESS) {
-        return 0;
+            servo_timer.stop() == false) {
+        return -1;
     }
     servo_timer_started = false;
     return 0;
@@ -101,7 +105,7 @@ void servo_timer_callback(timer_callback_args_t *args)
         ra_servo_t *servo = &ra_servos[i];
         if (servo->period_us) {
             servo->period_count += SERVO_TIMER_TICK_US;
-            if (servo->period_count < servo->period_us) {
+            if (servo->period_count <= servo->period_us) {
                 *servo->io_port = (uint32_t) servo->io_mask;
             } else {
                 *servo->io_port = (uint32_t) (servo->io_mask << 16);
