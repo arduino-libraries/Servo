@@ -88,7 +88,7 @@
                                       // 1/0.02s = 50Hz
 
                                       // higher end servos - remote control servos --- typical 333Hz
-                                      // 1/333Hz = 0.003003s * 1000000µs = 3003µs for a refesh rate
+                                      // 1/333Hz = 0.003003s * 1000000µs = 3003µs for a refresh rate
 #define REFRESH_INTERVAL    20000     // minimum time to refresh servos in microseconds 
 
 #define SERVOS_PER_TIMER       12     // the maximum number of servos controlled by one timer 
