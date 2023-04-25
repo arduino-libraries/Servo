@@ -28,8 +28,6 @@
 
 static servo_t servos[MAX_SERVOS];                         // static array of servo structures
 
-uint8_t ServoCount = 0;                                    // the total number of attached servos
-
 static volatile int8_t currentServoIndex[_Nbr_16timers];   // index for the servo being pulsed for each timer (or -1 if refresh interval)
 
 // convenience macros
@@ -63,7 +61,7 @@ void Servo_Handler(timer16_Sequence_t timer, Tc *tc, uint8_t channel, uint8_t in
         tc->COUNT16.COUNT.reg = (uint16_t) 0;
         WAIT_TC16_REGS_SYNC(tc)
     } else {
-        if (SERVO_INDEX(timer, currentServoIndex[timer]) < ServoCount && SERVO(timer, currentServoIndex[timer]).Pin.isActive == true) {
+        if (SERVO_INDEX(timer, currentServoIndex[timer]) < MAX_SERVOS && SERVO(timer, currentServoIndex[timer]).Pin.isActive == true) {
             digitalWrite(SERVO(timer, currentServoIndex[timer]).Pin.nbr, LOW);   // pulse this channel low if activated
         }
     }
@@ -71,7 +69,7 @@ void Servo_Handler(timer16_Sequence_t timer, Tc *tc, uint8_t channel, uint8_t in
     // Select the next servo controlled by this timer
     currentServoIndex[timer]++;
 
-    if (SERVO_INDEX(timer, currentServoIndex[timer]) < ServoCount && currentServoIndex[timer] < SERVOS_PER_TIMER) {
+    if (SERVO_INDEX(timer, currentServoIndex[timer]) < MAX_SERVOS && currentServoIndex[timer] < SERVOS_PER_TIMER) {
         if (SERVO(timer, currentServoIndex[timer]).Pin.isActive == true) {   // check if activated
             digitalWrite(SERVO(timer, currentServoIndex[timer]).Pin.nbr, HIGH);   // it's an active channel so pulse it high
         }
@@ -197,11 +195,24 @@ static boolean isTimerActive(timer16_Sequence_t timer)
 
 Servo::Servo()
 {
-  if (ServoCount < MAX_SERVOS) {
-    this->servoIndex = ServoCount++;                    // assign a servo index to this instance
-    servos[this->servoIndex].ticks = usToTicks(DEFAULT_PULSE_WIDTH);   // store default values
-  } else {
-    this->servoIndex = INVALID_SERVO;  // too many servos
+  // Iterate over array to find an uninitialized servo
+  this->servoIndex = INVALID_SERVO;  // index of this servo or INVALID_SERVO if not found
+  for (int8_t i = 0; i < MAX_SERVOS; i++) {
+    if (servos[i].servoIndex == INVALID_SERVO) {
+      this->servoIndex = i;
+      servos[this->servoIndex].ticks = usToTicks(DEFAULT_PULSE_WIDTH);   // store default values
+      break;
+    }
+  }
+  // servoIndex will be INVALID_SERVO if no free timers found
+}
+
+Servo::~Servo()
+{
+  if( this->servoIndex != INVALID_SERVO ) { // if this instance is attached to a pin, make it available to be reused
+    // Disable this servo if it was attached
+    this->detach();
+    this->servoIndex = INVALID_SERVO; // This instance of servo can now be reused
   }
 }
 

@@ -43,8 +43,7 @@ public:
     int32_t           duration = -1;
 };
 
-static ServoImpl* servos[MAX_SERVOS];                      // static array of servo structures
-uint8_t ServoCount = 0;                                    // the total number of attached servos
+static ServoImpl* servos[MAX_SERVOS] = {NULL};             // static array of servo structures
 
 #define SERVO_MIN() (MIN_PULSE_WIDTH - this->min)   // minimum value in us for this servo
 #define SERVO_MAX() (MAX_PULSE_WIDTH - this->max)   // maximum value in us for this servo
@@ -53,10 +52,23 @@ uint8_t ServoCount = 0;                                    // the total number o
 
 Servo::Servo()
 {
-  if (ServoCount < MAX_SERVOS) {
-    this->servoIndex = ServoCount++;
-  } else {
-    this->servoIndex = INVALID_SERVO;  // too many servos
+  // Iterate over array to find an uninitialized servo
+  this->servoIndex = INVALID_SERVO;  // index of this servo or INVALID_SERVO if not found
+  for (int8_t i = 0; i < MAX_SERVOS; i++) {
+    if (servos[i] == NULL) {
+      this->servoIndex = i;
+      break;
+    }
+  }
+  // servoIndex will be INVALID_SERVO if no free timers found
+}
+
+Servo::~Servo()
+{
+  if( this->servoIndex != INVALID_SERVO ) { // if this instance is attached to a pin, make it available to be reused
+    // Disable this servo if it was attached
+    this->detach();
+    this->servoIndex = INVALID_SERVO; // This instance of servo can now be reused
   }
 }
 
