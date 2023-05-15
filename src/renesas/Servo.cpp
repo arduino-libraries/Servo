@@ -127,6 +127,11 @@ uint8_t Servo::attach(int pin)
     return attach(pin, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
 }
 
+bool Servo::attached()
+{
+    return (servoIndex != SERVO_INVALID_INDEX);
+}
+
 uint8_t Servo::attach(int pin, int min, int max)
 {
     //assert(pin < NUM_DIGITAL_PINS); ?
