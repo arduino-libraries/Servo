@@ -85,18 +85,25 @@ static int servo_timer_config(uint32_t period_us)
         // Configure and enable the servo timer, for full 20ms
         uint8_t type = 0;
         int8_t channel = FspTimer::get_available_timer(type);
+        #ifdef SERVO_PRINT_DEBUG_INFO
+        Serial.print("\nservo_timer_config: type:");
+        Serial.print(type, DEC);
+        Serial.print(" Channel: ");
+        Serial.println(channel, DEC);
+        #endif
         if (channel != -1) {
             // lets initially configure the servo to 50ms
             servo_timer.begin(TIMER_MODE_PERIODIC, type, channel,
                     1000000.0f/period_us, 50.0f, servo_timer_callback, nullptr);
 
             // First pass assume GPT timer
-            s_pgpt0 = (R_GPT0_Type *)((uint32_t)R_GPT0 + ((uint32_t)R_GPT1 - (uint32_t)R_GPT0) * channel);
-            // turn off GTPR Buffer 
-            s_pgpt0->GTBER_b.PR = 0;
-            s_pgpt0->GTBER_b.BD1 = 1;
-
-            servo_timer.setup_overflow_irq();
+            if (type == GPT_TIMER) {
+                s_pgpt0 = (R_GPT0_Type *)((uint32_t)R_GPT0 + ((uint32_t)R_GPT1 - (uint32_t)R_GPT0) * channel);
+                // turn off GTPR Buffer 
+                s_pgpt0->GTBER_b.PR = 0;
+                s_pgpt0->GTBER_b.BD1 = 1;
+            }
+            servo_timer.setup_overflow_irq(10);
             servo_timer.open();
             servo_timer.stop();
             
@@ -146,7 +153,12 @@ static int servo_timer_stop()
 }
 
 inline static void updateClockPeriod(uint32_t period) {
-  if (s_pgpt0) s_pgpt0->GTPR = period;
+  if (s_pgpt0) {
+    s_pgpt0->GTPR = period;
+  } else  {
+    // AGT...
+    servo_timer.set_period(period);
+  }
 }
 
 
@@ -165,14 +177,15 @@ void servo_timer_callback(timer_callback_args_t *args)
     // Find the next servo to set high
     while (active_servos_mask_refresh) {
         channel = __builtin_ctz(active_servos_mask_refresh);
-        active_servos_mask_refresh &= ~(1 << channel);
         if (ra_servos[channel].period_us) {
             *ra_servos[channel].io_port = (uint32_t)ra_servos[channel].io_mask;
             updateClockPeriod(ra_servos[channel].period_ticks);
             channel_pin_set_high = channel;
             ticks_accum += ra_servos[channel_pin_set_high].period_ticks;
+            active_servos_mask_refresh &= ~(1 << channel);
             return;
         }
+        active_servos_mask_refresh &= ~(1 << channel);
     }
     
     // Got to hear we finished processing all servos, now delay to start of next pass.
