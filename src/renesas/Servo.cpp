@@ -28,16 +28,12 @@
 #include "math.h"
 #include "FspTimer.h"
 
-// uncomment to print servo Debug information
-//#define SERVO_PRINT_DEBUG_INFO
-
 #define SERVO_MAX_SERVOS            (_Nbr_16timers  * SERVOS_PER_TIMER)
 #define SERVO_INVALID_INDEX         (255)
 // Lower the timer ticks for finer resolution.
 #define SERVO_TIMER_TICK_US         (100)
 #define SERVO_US_PER_CYCLE          (20000)
 #define SERVO_IO_PORT_ADDR(pn)      &((R_PORT0 + ((uint32_t) (R_PORT1 - R_PORT0) * (pn)))->PCNTR3)
-
 #define MIN_CYCLE_OFF_US            50
 
 // Internal Servo sturct to keep track of RA configuration.
@@ -76,8 +72,6 @@ static uint32_t usToticks(uint32_t time_us) {
 }
 
 
-
-
 static int servo_timer_config(uint32_t period_us)
 {
     static bool configured = false;
@@ -85,12 +79,6 @@ static int servo_timer_config(uint32_t period_us)
         // Configure and enable the servo timer, for full 20ms
         uint8_t type = 0;
         int8_t channel = FspTimer::get_available_timer(type);
-        #ifdef SERVO_PRINT_DEBUG_INFO
-        Serial.print("\nservo_timer_config: type:");
-        Serial.print(type, DEC);
-        Serial.print(" Channel: ");
-        Serial.println(channel, DEC);
-        #endif
         if (channel != -1) {
             // lets initially configure the servo to 50ms
             servo_timer.begin(TIMER_MODE_PERIODIC, type, channel,
@@ -110,25 +98,12 @@ static int servo_timer_config(uint32_t period_us)
             // Now lets see what the period;
             servo_ticks_per_cycle = servo_timer.get_period_raw();
             min_servo_cycle_low = usToticks(MIN_CYCLE_OFF_US);
-            #ifdef SERVO_PRINT_DEBUG_INFO
-            Serial.print("Period:");
-            Serial.println(servo_ticks_per_cycle, DEC);
-            uint32_t ticks_544 = usToticks(544);
-            uint32_t ticks_2400 = usToticks(2400);
-            Serial.print("Min 544(ticks): ");
-            Serial.print(ticks_544);
-            Serial.print(" Max 2400: ");
-            Serial.print(ticks_2400);
-            Serial.print(" per degree: ");
-            Serial.println((float)(ticks_2400 - ticks_544) / 180.0f, 2);
-            #endif
 
             configured = true;
         }
     }
     return configured ? 0 : -1;
 }
-
 
 static int servo_timer_start()
 {
@@ -165,9 +140,9 @@ inline static void updateClockPeriod(uint32_t period) {
 void servo_timer_callback(timer_callback_args_t *args)
 {
     (void)args; // remove warning
-    static uint8_t channel=SERVO_MAX_SERVOS;
-    static uint8_t channel_pin_set_high=0xff;
-    static uint32_t ticks_accum=0;
+    static uint8_t channel = SERVO_MAX_SERVOS;
+    static uint8_t channel_pin_set_high = 0xff;
+    static uint32_t ticks_accum = 0;
 
     // See if we need to set a servo back low
     if (channel_pin_set_high != 0xff) {
@@ -254,7 +229,6 @@ uint8_t Servo::attach(int pin, int min, int max)
     if (servo_timer_start() != 0) {
         return 0;
     }
-
     return 1;
 }
 
