@@ -59,8 +59,6 @@ static FspTimer servo_timer;
 static bool servo_timer_started = false;
 void servo_timer_callback(timer_callback_args_t *args);
 
-// GPT pointer. 
-static R_GPT0_Type *s_pgpt0 = nullptr;
 static uint32_t servo_ticks_per_cycle = 0;
 static uint32_t min_servo_cycle_low = 0;
 static uint32_t active_servos_mask = 0;
@@ -83,14 +81,7 @@ static int servo_timer_config(uint32_t period_us)
             // lets initially configure the servo to 50ms
             servo_timer.begin(TIMER_MODE_PERIODIC, type, channel,
                     1000000.0f/period_us, 50.0f, servo_timer_callback, nullptr);
-
-            // First pass assume GPT timer
-            if (type == GPT_TIMER) {
-                s_pgpt0 = (R_GPT0_Type *)((uint32_t)R_GPT0 + ((uint32_t)R_GPT1 - (uint32_t)R_GPT0) * channel);
-                // turn off GTPR Buffer 
-                s_pgpt0->GTBER_b.PR = 0;
-                s_pgpt0->GTBER_b.BD1 = 1;
-            }
+            servo_timer.use_period_buffer(false);  // disable period buffering
             servo_timer.setup_overflow_irq(10);
             servo_timer.open();
             servo_timer.stop();
@@ -128,12 +119,7 @@ static int servo_timer_stop()
 }
 
 inline static void updateClockPeriod(uint32_t period) {
-  if (s_pgpt0) {
-    s_pgpt0->GTPR = period;
-  } else  {
-    // AGT...
     servo_timer.set_period(period);
-  }
 }
 
 
