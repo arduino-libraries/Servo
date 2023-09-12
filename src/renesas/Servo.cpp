@@ -81,7 +81,7 @@ static int servo_timer_config(uint32_t period_us)
             // lets initially configure the servo to 50ms
             servo_timer.begin(TIMER_MODE_PERIODIC, type, channel,
                     1000000.0f/period_us, 50.0f, servo_timer_callback, nullptr);
-            servo_timer.use_period_buffer(false);  // disable period buffering
+            servo_timer.set_period_buffer(false);  // disable period buffering
             servo_timer.setup_overflow_irq(10);
             servo_timer.open();
             servo_timer.stop();
