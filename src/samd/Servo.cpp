@@ -21,8 +21,19 @@
 #include <Arduino.h>
 #include <Servo.h>
 
-#define usToTicks(_us)    ((clockCyclesPerMicrosecond() * _us) / 16)                 // converts microseconds to tick
-#define ticksToUs(_ticks) (((unsigned) _ticks * 16) / clockCyclesPerMicrosecond())   // converts from ticks back to microseconds
+#if defined(__SAMD51__)
+ // Different prescalers depending on FCPU (avoid overflowing 16-bit counter)
+ #if(F_CPU > 200000000)
+  #define usToTicks(_us)    ((clockCyclesPerMicrosecond() * _us) / 128)
+  #define ticksToUs(_ticks) (((unsigned) _ticks * 128) / clockCyclesPerMicrosecond())
+ #else
+  #define usToTicks(_us)    ((clockCyclesPerMicrosecond() * _us) / 64)
+  #define ticksToUs(_ticks) (((unsigned) _ticks * 64) / clockCyclesPerMicrosecond())
+ #endif
+#else
+ #define usToTicks(_us)    ((clockCyclesPerMicrosecond() * _us) / 16)                 // converts microseconds to tick
+ #define ticksToUs(_ticks) (((unsigned) _ticks * 16) / clockCyclesPerMicrosecond())   // converts from ticks back to microseconds
+#endif
 
 #define TRIM_DURATION  5                                   // compensation ticks to trim adjust for digitalWrite delays
 
@@ -41,6 +52,7 @@ static volatile int8_t currentServoIndex[_Nbr_16timers];   // index for the serv
 #define SERVO_MIN() (MIN_PULSE_WIDTH - this->min * 4)   // minimum value in us for this servo
 #define SERVO_MAX() (MAX_PULSE_WIDTH - this->max * 4)   // maximum value in us for this servo
 
+// Referenced in SAMD21 code only, no harm in defining regardless
 #define WAIT_TC16_REGS_SYNC(x) while(x->COUNT16.STATUS.bit.SYNCBUSY);
 
 /************ static functions common to all instances ***********************/
@@ -61,7 +73,11 @@ void Servo_Handler(timer16_Sequence_t timer, Tc *tc, uint8_t channel, uint8_t in
 {
     if (currentServoIndex[timer] < 0) {
         tc->COUNT16.COUNT.reg = (uint16_t) 0;
+#if defined(__SAMD51__)
+        while(tc->COUNT16.SYNCBUSY.bit.COUNT);
+#else
         WAIT_TC16_REGS_SYNC(tc)
+#endif
     } else {
         if (SERVO_INDEX(timer, currentServoIndex[timer]) < ServoCount && SERVO(timer, currentServoIndex[timer]).Pin.isActive == true) {
             digitalWrite(SERVO(timer, currentServoIndex[timer]).Pin.nbr, LOW);   // pulse this channel low if activated
@@ -77,18 +93,41 @@ void Servo_Handler(timer16_Sequence_t timer, Tc *tc, uint8_t channel, uint8_t in
         }
 
         // Get the counter value
+#if defined(__SAMD51__)
+        // Note from datasheet: Prior to any read access, this register must be synchronized by user by writing the according TC
+        // Command value to the Control B Set register (CTRLBSET.CMD=READSYNC)
+        while (tc->COUNT16.SYNCBUSY.bit.CTRLB);
+	tc->COUNT16.CTRLBSET.bit.CMD = TC_CTRLBSET_CMD_READSYNC_Val;
+        while (tc->COUNT16.SYNCBUSY.bit.CTRLB);
+#endif
         uint16_t tcCounterValue = tc->COUNT16.COUNT.reg;
+#if defined(__SAMD51__)
+        while(tc->COUNT16.SYNCBUSY.bit.COUNT);
+#else
         WAIT_TC16_REGS_SYNC(tc)
+#endif
 
         tc->COUNT16.CC[channel].reg = (uint16_t) (tcCounterValue + SERVO(timer, currentServoIndex[timer]).ticks);
+#if defined(__SAMD51__)
+        if(channel == 0) {
+            while(tc->COUNT16.SYNCBUSY.bit.CC0);
+        } else if(channel == 1) {
+            while(tc->COUNT16.SYNCBUSY.bit.CC1);
+        }
+#else
         WAIT_TC16_REGS_SYNC(tc)
+#endif
     }
     else {
         // finished all channels so wait for the refresh period to expire before starting over
 
         // Get the counter value
         uint16_t tcCounterValue = tc->COUNT16.COUNT.reg;
+#if defined(__SAMD51__)
+        while(tc->COUNT16.SYNCBUSY.bit.COUNT);
+#else
         WAIT_TC16_REGS_SYNC(tc)
+#endif
 
         if (tcCounterValue + 4UL < usToTicks(REFRESH_INTERVAL)) {   // allow a few ticks to ensure the next OCR1A not missed
             tc->COUNT16.CC[channel].reg = (uint16_t) usToTicks(REFRESH_INTERVAL);
@@ -96,7 +135,15 @@ void Servo_Handler(timer16_Sequence_t timer, Tc *tc, uint8_t channel, uint8_t in
         else {
             tc->COUNT16.CC[channel].reg = (uint16_t) (tcCounterValue + 4UL);   // at least REFRESH_INTERVAL has elapsed
         }
+#if defined(__SAMD51__)
+        if(channel == 0) {
+            while(tc->COUNT16.SYNCBUSY.bit.CC0);
+        } else if(channel == 1) {
+            while(tc->COUNT16.SYNCBUSY.bit.CC1);
+        }
+#else
         WAIT_TC16_REGS_SYNC(tc)
+#endif
 
         currentServoIndex[timer] = -1;   // this will get incremented at the end of the refresh period to start again at the first channel
     }
@@ -109,19 +156,34 @@ static inline void resetTC (Tc* TCx)
 {
     // Disable TCx
     TCx->COUNT16.CTRLA.reg &= ~TC_CTRLA_ENABLE;
+#if defined(__SAMD51__)
+    while(TCx->COUNT16.SYNCBUSY.bit.ENABLE);
+#else
     WAIT_TC16_REGS_SYNC(TCx)
+#endif
 
     // Reset TCx
     TCx->COUNT16.CTRLA.reg = TC_CTRLA_SWRST;
+#if defined(__SAMD51__)
+    while(TCx->COUNT16.SYNCBUSY.bit.SWRST);
+#else
     WAIT_TC16_REGS_SYNC(TCx)
+#endif
     while (TCx->COUNT16.CTRLA.bit.SWRST);
 }
 
 static void _initISR(Tc *tc, uint8_t channel, uint32_t id, IRQn_Type irqn, uint8_t gcmForTimer, uint8_t intEnableBit)
 {
-    // Enable GCLK for timer 1 (timer counter input clock)
+    // Select GCLK0 as timer/counter input clock source
+#if defined(__SAMD51__)
+    int idx = gcmForTimer;           // see datasheet Table 14-9
+    GCLK->PCHCTRL[idx].bit.GEN  = 0; // Select GCLK0 as periph clock source
+    GCLK->PCHCTRL[idx].bit.CHEN = 1; // Enable peripheral
+    while(!GCLK->PCHCTRL[idx].bit.CHEN);
+#else
     GCLK->CLKCTRL.reg = (uint16_t) (GCLK_CLKCTRL_CLKEN | GCLK_CLKCTRL_GEN_GCLK0 | GCLK_CLKCTRL_ID(gcmForTimer));
     while (GCLK->STATUS.bit.SYNCBUSY);
+#endif
 
     // Reset the timer
     // TODO this is not the right thing to do if more than one channel per timer is used by the Servo library
@@ -130,19 +192,45 @@ static void _initISR(Tc *tc, uint8_t channel, uint32_t id, IRQn_Type irqn, uint8
     // Set timer counter mode to 16 bits
     tc->COUNT16.CTRLA.reg |= TC_CTRLA_MODE_COUNT16;
 
+#if defined(__SAMD51__)
+    // Set timer counter mode as normal PWM
+    tc->COUNT16.WAVE.bit.WAVEGEN = TCC_WAVE_WAVEGEN_NPWM_Val;
+
+    // Set the prescaler factor to 64 or 128 depending on FCPU
+    // (avoid overflowing 16-bit clock counter)
+ #if(F_CPU > 200000000)
+    tc->COUNT16.CTRLA.bit.PRESCALER = TCC_CTRLA_PRESCALER_DIV128_Val;
+ #else
+    // At 120-200 MHz GCLK this is 1875-3125 ticks per millisecond
+    tc->COUNT16.CTRLA.bit.PRESCALER = TCC_CTRLA_PRESCALER_DIV64_Val;
+ #endif
+#else
     // Set timer counter mode as normal PWM
     tc->COUNT16.CTRLA.reg |= TC_CTRLA_WAVEGEN_NPWM;
 
     // Set the prescaler factor to GCLK_TC/16.  At nominal 48 MHz GCLK_TC this is 3000 ticks per millisecond
     tc->COUNT16.CTRLA.reg |= TC_CTRLA_PRESCALER_DIV16;
+#endif
 
     // Count up
     tc->COUNT16.CTRLBCLR.bit.DIR = 1;
+#if defined(__SAMD51__)
+    while(tc->COUNT16.SYNCBUSY.bit.CTRLB);
+#else
     WAIT_TC16_REGS_SYNC(tc)
+#endif
 
     // First interrupt request after 1 ms
     tc->COUNT16.CC[channel].reg = (uint16_t) usToTicks(1000UL);
+#if defined(__SAMD51__)
+    if(channel == 0) {
+        while(tc->COUNT16.SYNCBUSY.bit.CC0);
+    } else if(channel == 1) {
+        while(tc->COUNT16.SYNCBUSY.bit.CC1);
+    }
+#else
     WAIT_TC16_REGS_SYNC(tc)
+#endif
 
     // Configure interrupt request
     // TODO this should be changed if more than one channel per timer is used by the Servo library
@@ -156,7 +244,11 @@ static void _initISR(Tc *tc, uint8_t channel, uint32_t id, IRQn_Type irqn, uint8
 
     // Enable the timer and start it
     tc->COUNT16.CTRLA.reg |= TC_CTRLA_ENABLE;
+#if defined(__SAMD51__)
+    while(tc->COUNT16.SYNCBUSY.bit.ENABLE);
+#else
     WAIT_TC16_REGS_SYNC(tc)
+#endif
 }
 
 static void initISR(timer16_Sequence_t timer)
