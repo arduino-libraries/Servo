@@ -24,21 +24,30 @@
 
 static servo_t servos[MAX_SERVOS];                          // static array of servo structures
 
-uint8_t ServoCount = 0;                                     // the total number of attached servos
-
-
 
 uint32_t group_pins[3][NRF_PWM_CHANNEL_COUNT]={{NRF_PWM_PIN_NOT_CONNECTED, NRF_PWM_PIN_NOT_CONNECTED, NRF_PWM_PIN_NOT_CONNECTED, NRF_PWM_PIN_NOT_CONNECTED}, {NRF_PWM_PIN_NOT_CONNECTED, NRF_PWM_PIN_NOT_CONNECTED, NRF_PWM_PIN_NOT_CONNECTED, NRF_PWM_PIN_NOT_CONNECTED}, {NRF_PWM_PIN_NOT_CONNECTED, NRF_PWM_PIN_NOT_CONNECTED, NRF_PWM_PIN_NOT_CONNECTED, NRF_PWM_PIN_NOT_CONNECTED}};
 static uint16_t seq_values[3][NRF_PWM_CHANNEL_COUNT]={{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
 
 Servo::Servo()
 {
-  if (ServoCount < MAX_SERVOS) {
-    this->servoIndex = ServoCount++;                    // assign a servo index to this instance
-  } else {                                                 
-    this->servoIndex = INVALID_SERVO;  					// too many servos
+  // Iterate over array to find an uninitialized servo
+  this->servoIndex = INVALID_SERVO;  // index of this servo or INVALID_SERVO if not found
+  for (int8_t i = 0; i < MAX_SERVOS; i++) {
+    if (servos[i].servoIndex == INVALID_SERVO) {
+      this->servoIndex = i;
+      break;
+    }
   }
+  // servoIndex will be INVALID_SERVO if no free timers found
+}
 
+Servo::~Servo()
+{
+  if( this->servoIndex != INVALID_SERVO ) { // if this instance is attached to a pin, make it available to be reused
+    // Disable this servo if it was attached
+    this->detach();
+    this->servoIndex = INVALID_SERVO; // This instance of servo can now be reused
+  }
 }
 
 uint8_t Servo::attach(int pin)

@@ -59,6 +59,11 @@ Servo::Servo() {
     this->resetFields();
 }
 
+Servo::~Servo() {
+    this->detach();
+    this->resetFields();
+}
+
 bool Servo::attach(uint8 pin, uint16 minPW, uint16 maxPW, int16 minAngle, int16 maxAngle)
 {
     // SerialUSB.begin(115200);
