@@ -35,7 +35,7 @@
 #define SERVO_US_PER_CYCLE          (20000)
 #define SERVO_IO_PORT_ADDR(pn)      &((R_PORT0 + ((uint32_t) (R_PORT1 - R_PORT0) * (pn)))->PCNTR3)
 
-// Internal Servo sturct to keep track of RA configuration.
+// Internal Servo struct to keep track of RA configuration.
 typedef struct {
     // Servo period in microseconds.
     uint32_t period_us;

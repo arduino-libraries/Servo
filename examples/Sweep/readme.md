@@ -1,6 +1,6 @@
 # Sweep
 
-Sweeps the shaft of a RC [servo motor](http://en.wikipedia.org/wiki/Servo_motor#RC_servos) back and forth across 180 degrees.
+Sweeps the shaft of an RC [servo motor](http://en.wikipedia.org/wiki/Servo_motor#RC_servos) back and forth across 180 degrees.
 
 ## Hardware Required
 

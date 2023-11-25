@@ -4,12 +4,12 @@
 
 ### `attach()`
 
-Attach the Servo variable to a pin. Note that in Arduino 0016 and earlier, the Servo library supports servos on only two pins: 9 and 10.
+Attach the Servo variable to a pin. Note that in Arduino IDE 0016 and earlier, the Servo library supports servos on only two pins: 9 and 10.
 
 #### Syntax
 
 ```
-servo.attach(pin) 
+servo.attach(pin)
 servo.attach(pin, min, max)
 ```
 
@@ -23,16 +23,16 @@ servo.attach(pin, min, max)
 #### Example
 
 ```
-#include <Servo.h> 
+#include <Servo.h>
 
 Servo myservo;
 
-void setup() 
-{ 
+void setup()
+{
   myservo.attach(9);
-} 
+}
 
-void loop() {} 
+void loop() {}
 ```
 
 #### See also
@@ -58,17 +58,17 @@ servo.write(angle)
 #### Example
 
 ````
-#include <Servo.h> 
+#include <Servo.h>
 
 Servo myservo;
 
-void setup() 
-{ 
+void setup()
+{
   myservo.attach(9);
   myservo.write(90);  // set servo to mid-point
-} 
+}
 
-void loop() {} 
+void loop() {}
 ````
 #### See also
 
@@ -81,7 +81,7 @@ Writes a value in microseconds (us) to the servo, controlling the shaft accordin
 
 Note that some manufactures do not follow this standard very closely so that servos often respond to values between 700 and 2300. Feel free to increase these endpoints until the servo no longer continues to increase its range. Note however that attempting to drive a servo past its endpoints (often indicated by a growling sound) is a high-current state, and should be avoided.
 
-Continuous-rotation servos will respond to the writeMicrosecond function in an analogous manner to the write function.
+Continuous-rotation servos will respond to the writeMicrosecond function in an manner analogous to the write function.
 
 #### Syntax
 
@@ -97,17 +97,17 @@ servo.writeMicroseconds(us)
 #### Example
 
 ````
-#include <Servo.h> 
+#include <Servo.h>
 
 Servo myservo;
 
-void setup() 
-{ 
+void setup()
+{
   myservo.attach(9);
   myservo.writeMicroseconds(1500);  // set servo to mid-point
-} 
+}
 
-void loop() {} 
+void loop() {}
 ````
 
 #### See also

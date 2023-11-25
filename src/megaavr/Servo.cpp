@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <Servo.h>
 
-#define usToTicks(_us)    ((clockCyclesPerMicrosecond() / 16 * _us) / 4)                 // converts microseconds to tick
+#define usToTicks(_us)    ((clockCyclesPerMicrosecond() / 16 * _us) / 4)                 // converts microseconds to ticks
 #define ticksToUs(_ticks) (((unsigned) _ticks * 16) / (clockCyclesPerMicrosecond() / 4))   // converts from ticks back to microseconds
 
 #define TRIM_DURATION  5                                   // compensation ticks to trim adjust for digitalWrite delays
