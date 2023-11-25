@@ -33,7 +33,7 @@
 #include "pwm.h"
 #include "math.h"
 
-// 20 millisecond period config.  For a 1-based prescaler,
+// 20 millisecond period config. For a 1-based prescaler,
 //
 //    (prescaler * overflow / CYC_MSEC) msec = 1 timer cycle = 20 msec
 // => prescaler * overflow = 20 * CYC_MSEC

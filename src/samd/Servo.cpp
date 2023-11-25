@@ -21,7 +21,7 @@
 #include <Arduino.h>
 #include <Servo.h>
 
-#define usToTicks(_us)    ((clockCyclesPerMicrosecond() * _us) / 16)                 // converts microseconds to tick
+#define usToTicks(_us)    ((clockCyclesPerMicrosecond() * _us) / 16)                 // converts microseconds to ticks
 #define ticksToUs(_ticks) (((unsigned) _ticks * 16) / clockCyclesPerMicrosecond())   // converts from ticks back to microseconds
 
 #define TRIM_DURATION  5                                   // compensation ticks to trim adjust for digitalWrite delays
@@ -133,7 +133,7 @@ static void _initISR(Tc *tc, uint8_t channel, uint32_t id, IRQn_Type irqn, uint8
     // Set timer counter mode as normal PWM
     tc->COUNT16.CTRLA.reg |= TC_CTRLA_WAVEGEN_NPWM;
 
-    // Set the prescaler factor to GCLK_TC/16.  At nominal 48 MHz GCLK_TC this is 3000 ticks per millisecond
+    // Set the prescaler factor to GCLK_TC/16. At nominal 48 MHz GCLK_TC this is 3000 ticks per millisecond
     tc->COUNT16.CTRLA.reg |= TC_CTRLA_PRESCALER_DIV16;
 
     // Count up

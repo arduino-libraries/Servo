@@ -49,17 +49,17 @@
  *
  * This implementation only allows Servo instances to attach() to pins
  * that already have a timer channel associated with them, and just
- * uses pwmWrite() to drive the wave.
+ * uses analogWrite() to drive the wave.
  *
  * This introduces an incompatibility: while the Arduino
  * implementation of attach() returns the affected channel on success
  * and 0 on failure, this one returns true on success and false on
  * failure.
  *
- * RC Servos expect a pulse every 20 ms.  Since periods are set for
+ * RC Servos expect a pulse every 20 ms. Since periods are set for
  * entire timers, rather than individual channels, attach()ing a Servo
  * to a pin can interfere with other pins associated with the same
- * timer.  As always, your board's pin map is your friend.
+ * timer. As always, your board's pin map is your friend.
  */
 
 // Pin number of unattached pins
@@ -70,7 +70,7 @@
 
 
 // Default min/max pulse widths (in microseconds) and angles (in
-// degrees).  Values chosen for Arduino compatibility.  These values
+// degrees). Values chosen for Arduino compatibility. These values
 // are part of the public API; DO NOT CHANGE THEM.
 #define MIN_ANGLE               0
 #define MAX_ANGLE             180
@@ -101,21 +101,21 @@ public:
      *            pin must be capable of PWM output.
      *
      * @param minPulseWidth Minimum pulse width to write to pin, in
-     *                      microseconds.  This will be associated
-     *                      with a minAngle degree angle.  Defaults to
+     *                      microseconds. This will be associated
+     *                      with a minAngle degree angle. Defaults to
      *                      SERVO_DEFAULT_MIN_PW = 544.
      *
      * @param maxPulseWidth Maximum pulse width to write to pin, in
-     *                      microseconds.  This will be associated
+     *                      microseconds. This will be associated
      *                      with a maxAngle degree angle. Defaults to
      *                      SERVO_DEFAULT_MAX_PW = 2400.
      *
      * @param minAngle Target angle (in degrees) associated with
-     *                 minPulseWidth.  Defaults to
+     *                 minPulseWidth. Defaults to
      *                 SERVO_DEFAULT_MIN_ANGLE = 0.
      *
      * @param maxAngle Target angle (in degrees) associated with
-     *                 maxPulseWidth.  Defaults to
+     *                 maxPulseWidth. Defaults to
      *                 SERVO_DEFAULT_MAX_ANGLE = 180.
      *
      * @sideeffect May set pinMode(pin, PWM).
@@ -140,7 +140,7 @@ public:
     /**
      * @brief Set the servomotor target angle.
      *
-     * @param angle Target angle, in degrees.  If the target angle is
+     * @param angle Target angle, in degrees. If the target angle is
      *              outside the range specified at attach() time, it
      *              will be clamped to lie in that range.
      *
@@ -161,7 +161,7 @@ public:
     void writeMicroseconds(uint16 pulseWidth);
 
     /**
-     * Get the servomotor's target angle, in degrees.  This will
+     * Get the servomotor's target angle, in degrees. This will
      * lie inside the range specified at attach() time.
      *
      * @see Servo::attach()
@@ -169,7 +169,7 @@ public:
     int read() const;
 
     /**
-     * Get the current pulse width, in microseconds.  This will
+     * Get the current pulse width, in microseconds. This will
      * lie within the range specified at attach() time.
      *
      * @see Servo::attach()
