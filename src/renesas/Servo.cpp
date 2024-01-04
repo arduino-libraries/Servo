@@ -84,7 +84,7 @@ static int servo_timer_config(uint32_t period_us)
             servo_timer.stop();
             // Read the timer's period count.
             servo_ticks_per_cycle = servo_timer.get_period_raw();
-            min_servo_cycle_low = usToticks(MIN_CYCLE_OFF_US);
+            min_servo_cycle_low = us_to_ticks(SERVO_MIN_CYCLE_OFF_US);
 
             configured = true;
         }
@@ -255,7 +255,7 @@ void Servo::writeMicroseconds(int us)
     if (servoIndex != SERVO_INVALID_INDEX) {
         ra_servo_t *servo = &ra_servos[servoIndex];
         servo->period_us = constrain(us, servo->period_min, servo->period_max);
-        servo->period_ticks = usToticks(servo->period_us);
+        servo->period_ticks = us_to_ticks(servo->period_us);
     }
 }
 
