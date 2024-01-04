@@ -31,10 +31,9 @@
 #define SERVO_MAX_SERVOS            (_Nbr_16timers  * SERVOS_PER_TIMER)
 #define SERVO_INVALID_INDEX         (255)
 // Lower the timer ticks for finer resolution.
-#define SERVO_TIMER_TICK_US         (100)
 #define SERVO_US_PER_CYCLE          (20000)
 #define SERVO_IO_PORT_ADDR(pn)      &((R_PORT0 + ((uint32_t) (R_PORT1 - R_PORT0) * (pn)))->PCNTR3)
-#define MIN_CYCLE_OFF_US            50
+#define SERVO_MIN_CYCLE_OFF_US      50
 
 // Internal Servo sturct to keep track of RA configuration.
 typedef struct {
@@ -65,28 +64,25 @@ static uint32_t active_servos_mask = 0;
 static uint32_t active_servos_mask_refresh = 0;
 
 
-static uint32_t usToticks(uint32_t time_us) {
-    return (float(servo_ticks_per_cycle) / float(SERVO_US_PER_CYCLE)) * time_us;
+static uint32_t us_to_ticks(uint32_t time_us) {
+    return ((float) servo_ticks_per_cycle / (float) SERVO_US_PER_CYCLE) * time_us;
 }
-
 
 static int servo_timer_config(uint32_t period_us)
 {
     static bool configured = false;
     if (configured == false) {
-        // Configure and enable the servo timer, for full 20ms
+        // Configure and enable the servo timer.
         uint8_t type = 0;
         int8_t channel = FspTimer::get_available_timer(type);
         if (channel != -1) {
-            // lets initially configure the servo to 50ms
             servo_timer.begin(TIMER_MODE_PERIODIC, type, channel,
                     1000000.0f/period_us, 50.0f, servo_timer_callback, nullptr);
             servo_timer.set_period_buffer(false);  // disable period buffering
             servo_timer.setup_overflow_irq(10);
             servo_timer.open();
             servo_timer.stop();
-            
-            // Now lets see what the period;
+            // Read the timer's period count.
             servo_ticks_per_cycle = servo_timer.get_period_raw();
             min_servo_cycle_low = usToticks(MIN_CYCLE_OFF_US);
 
@@ -118,10 +114,9 @@ static int servo_timer_stop()
     return 0;
 }
 
-inline static void updateClockPeriod(uint32_t period) {
+inline static void servo_timer_set_period(uint32_t period) {
     servo_timer.set_period(period);
 }
-
 
 void servo_timer_callback(timer_callback_args_t *args)
 {
@@ -132,28 +127,32 @@ void servo_timer_callback(timer_callback_args_t *args)
 
     // See if we need to set a servo back low
     if (channel_pin_set_high != 0xff) {
-        *ra_servos[channel_pin_set_high].io_port = (uint32_t)(ra_servos[channel_pin_set_high].io_mask << 16);
+        *ra_servos[channel_pin_set_high].io_port = ra_servos[channel_pin_set_high].io_mask << 16;
     }
 
     // Find the next servo to set high
     while (active_servos_mask_refresh) {
         channel = __builtin_ctz(active_servos_mask_refresh);
         if (ra_servos[channel].period_us) {
-            *ra_servos[channel].io_port = (uint32_t)ra_servos[channel].io_mask;
-            updateClockPeriod(ra_servos[channel].period_ticks);
+            *ra_servos[channel].io_port = ra_servos[channel].io_mask;
+            servo_timer_set_period(ra_servos[channel].period_ticks);
             channel_pin_set_high = channel;
-            ticks_accum += ra_servos[channel_pin_set_high].period_ticks;
+            ticks_accum += ra_servos[channel].period_ticks;
             active_servos_mask_refresh &= ~(1 << channel);
             return;
         }
         active_servos_mask_refresh &= ~(1 << channel);
     }
-    
-    // Got to hear we finished processing all servos, now delay to start of next pass.
+    // Finished processing all servos, now delay to start of next pass.
     ticks_accum += min_servo_cycle_low;
-    uint32_t time_to_next_cycle = (servo_ticks_per_cycle > ticks_accum)? servo_ticks_per_cycle - ticks_accum : min_servo_cycle_low;
+    uint32_t time_to_next_cycle;
+    if (servo_ticks_per_cycle > ticks_accum) {
+        time_to_next_cycle = servo_ticks_per_cycle - ticks_accum;
+    } else {
+        time_to_next_cycle = min_servo_cycle_low;
+    }
     ticks_accum = 0;
-    updateClockPeriod(time_to_next_cycle);
+    servo_timer_set_period(time_to_next_cycle);
     channel_pin_set_high = 0xff;
     active_servos_mask_refresh = active_servos_mask;
 }
@@ -180,7 +179,7 @@ uint8_t Servo::attach(int pin, int min, int max)
         return 0;
     }
 
-    // Configure and the timer
+    // Configure the servo timer.
     if (servo_timer_config(SERVO_US_PER_CYCLE) != 0) {
         return 0;
     }
@@ -211,7 +210,7 @@ uint8_t Servo::attach(int pin, int min, int max)
     R_IOPORT_PinCfg(&g_ioport_ctrl, io_pin,
             IOPORT_CFG_PORT_DIRECTION_OUTPUT | IOPORT_CFG_PORT_OUTPUT_HIGH);
 
-    // start the timer if it's not started.
+    // Start the timer if it's not started.
     if (servo_timer_start() != 0) {
         return 0;
     }
@@ -255,8 +254,7 @@ void Servo::writeMicroseconds(int us)
 {
     if (servoIndex != SERVO_INVALID_INDEX) {
         ra_servo_t *servo = &ra_servos[servoIndex];
-        //servo->period_count = 0;
-        servo->period_us = constrain(us, (int)servo->period_min, (int)servo->period_max);
+        servo->period_us = constrain(us, servo->period_min, servo->period_max);
         servo->period_ticks = usToticks(servo->period_us);
     }
 }
