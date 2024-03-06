@@ -34,33 +34,43 @@ jobs:
           - fqbn: arduino:avr:nano
             platforms: |
               - name: arduino:avr
+            artifact-name-suffix: arduino-avr-nano
           - fqbn: arduino:avr:mega
             platforms: |
               - name: arduino:avr
+            artifact-name-suffix: arduino-avr-mega
           - fqbn: arduino:avr:leonardo
             platforms: |
               - name: arduino:avr
+            artifact-name-suffix: arduino-avr-leonardo
           - fqbn: arduino:megaavr:nona4809
             platforms: |
               - name: arduino:megaavr
+            artifact-name-suffix: arduino-megaavr-nona4809
           - fqbn: arduino:sam:arduino_due_x_dbg
             platforms: |
               - name: arduino:sam
+            artifact-name-suffix: arduino-sam-arduino_due_x_dbg
           - fqbn: arduino:samd:mkrzero
             platforms: |
               - name: arduino:samd
+            artifact-name-suffix: arduino-samd-mkrzero
           - fqbn: arduino:mbed_portenta:envie_m7:target_core=cm4
             platforms: |
               - name: arduino:mbed_portenta
+            artifact-name-suffix: arduino-mbed_portenta-envie_m7-target_core-cm4
           - fqbn: arduino:mbed_portenta:envie_m7
             platforms: |
               - name: arduino:mbed_portenta
+            artifact-name-suffix: arduino-mbed_portenta-envie_m7
           - fqbn: arduino:mbed_nano:nano33ble
             platforms: |
               - name: arduino:mbed_nano
+            artifact-name-suffix: arduino-mbed_nano-nano33ble
           - fqbn: arduino:mbed_nano:nanorp2040connect
             platforms: |
               - name: arduino:mbed_nano
+            artifact-name-suffix: arduino-mbed_nano-nanorp2040connect
 
     steps:
       - name: Checkout repository
@@ -87,4 +97,4 @@ jobs:
         with:
           if-no-files-found: error
           path: ${{ env.SKETCHES_REPORTS_PATH }}
-          name: ${{ env.SKETCHES_REPORTS_PATH }}
+          name: sketches-report-${{ matrix.board.artifact-name-suffix }}
