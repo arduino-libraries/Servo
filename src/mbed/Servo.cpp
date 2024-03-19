@@ -128,7 +128,7 @@ int Servo::readMicroseconds()
   if (!servos[this->servoIndex]) {
     return 0;
   }
-  return servos[this->servoIndex]->duration;
+  return servos[this->servoIndex]->duration + TRIM_DURATION;
 }
 
 bool Servo::attached()
