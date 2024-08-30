@@ -245,7 +245,7 @@ int Servo::read()
 {
     if (servoIndex != SERVO_INVALID_INDEX) {
         ra_servo_t *servo = &ra_servos[servoIndex];
-        return map(servo->period_us, servo->period_min, servo->period_max, 0, 180);
+        return map(servo->period_us + 1, servo->period_min, servo->period_max, 0, 180);
     }
     return 0;
 }
