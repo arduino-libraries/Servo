@@ -240,7 +240,7 @@ void Servo::write(int value)
             value = constrain(value, 0, 180);
             value = map(value, 0, 180, servo->period_min, servo->period_max);
         }
-        this->writeMicroseconds(value);
+        writeMicroseconds(value);
     }
 }
 
