@@ -232,12 +232,15 @@ void Servo::detach()
     }
 }
 
-void Servo::write(int angle)
+void Servo::write(int value)
 {
     if (servoIndex != SERVO_INVALID_INDEX) {
         ra_servo_t *servo = &ra_servos[servoIndex];
-        angle = constrain(angle, 0, 180);
-        writeMicroseconds(map(angle, 0, 180, servo->period_min, servo->period_max));
+        if(value < MIN_PULSE_WIDTH) {
+            value = constrain(value, 0, 180);
+            value = map(value, 0, 180, servo->period_min, servo->period_max);
+        }
+        this->writeMicroseconds(value);
     }
 }
 
