@@ -120,7 +120,7 @@ void loop() {}
 
 Read the current setpoint of the servo (the angle passed to the last call to [write()](#write)).
 
-Note that the servo has no way of reporting its current physical orientation. This method returns the angle that has been requested to the servo, whether this angle has already been reached or not.
+Note that the servo has no way of reporting its current physical orientation. This method returns the angle to which the sketch program has requested the servo to move, regardless of whether the servo has already reached that angle.
 
 #### Syntax
 
