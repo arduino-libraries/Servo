@@ -148,9 +148,12 @@ bool Servo::detach() {
     return true;
 }
 
-void Servo::write(int degrees) {
-    degrees = constrain(degrees, this->minAngle, this->maxAngle);
-    this->writeMicroseconds(ANGLE_TO_US(degrees));
+void Servo::write(int value) {
+    if(value < MIN_PULSE_WIDTH) {
+        value = constrain(value, this->minAngle, this->maxAngle);
+        value = ANGLE_TO_US(value);
+    }
+    this->writeMicroseconds(value);
 }
 
 int Servo::read() const {
