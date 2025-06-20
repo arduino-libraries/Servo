@@ -21,7 +21,7 @@
 #include <Arduino.h>
 #include <Servo.h>
 
-#define usToTicks(_us)    (( clockCyclesPerMicrosecond() * _us) / 32)     // converts microseconds to tick
+#define usToTicks(_us)    (( clockCyclesPerMicrosecond() * _us) / 32)     // converts microseconds to ticks
 #define ticksToUs(_ticks) (( (unsigned)_ticks * 32)/ clockCyclesPerMicrosecond() ) // converts from ticks back to microseconds
 
 #define TRIM_DURATION       2                               // compensation ticks to trim adjust for digitalWrite delays
@@ -89,7 +89,7 @@ void Servo_Handler(timer16_Sequence_t timer, Tc *tc, uint8_t channel)
     if( SERVO_INDEX(timer,Channel[timer]) < ServoCount && Channel[timer] < SERVOS_PER_TIMER) {
         tc->TC_CHANNEL[channel].TC_RA = tc->TC_CHANNEL[channel].TC_CV + SERVO(timer,Channel[timer]).ticks;
         if(SERVO(timer,Channel[timer]).Pin.isActive == true) {    // check if activated
-            digitalWrite( SERVO(timer,Channel[timer]).Pin.nbr,HIGH); // its an active channel so pulse it high
+            digitalWrite( SERVO(timer,Channel[timer]).Pin.nbr,HIGH); // it's an active channel so pulse it high
         }
     }
     else {

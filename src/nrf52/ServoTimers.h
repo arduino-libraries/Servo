@@ -17,7 +17,7 @@
 */
 
 /*
- * nRF52 doesn't use timer, but PWM. This file include definitions to keep
+ * nRF52 doesn't use timer, but PWM. This file includes definitions to keep
  * compatibility with the Servo library standards.
  */
 

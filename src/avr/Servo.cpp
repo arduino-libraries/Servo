@@ -1,5 +1,5 @@
 /*
- Servo.cpp - Interrupt driven Servo library for Arduino using 16 bit timers- Version 2
+ Servo.cpp - Interrupt driven Servo library for Arduino using 16 bit timers - Version 2
  Copyright (c) 2009 Michael Margolis.  All right reserved.
 
  This library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@
 
 #include "Servo.h"
 
-#define usToTicks(_us)    (( clockCyclesPerMicrosecond()* _us) / 8)     // converts microseconds to tick (assumes prescale of 8)  // 12 Aug 2009
+#define usToTicks(_us)    (( clockCyclesPerMicrosecond()* _us) / 8)     // converts microseconds to ticks (assumes prescaler of 8)  // 12 Aug 2009
 #define ticksToUs(_ticks) (( (unsigned)_ticks * 8)/ clockCyclesPerMicrosecond() ) // converts from ticks back to microseconds
 
 
@@ -62,7 +62,7 @@ static inline void handle_interrupts(timer16_Sequence_t timer, volatile uint16_t
   if( SERVO_INDEX(timer,Channel[timer]) < ServoCount && Channel[timer] < SERVOS_PER_TIMER) {
     *OCRnA = *TCNTn + SERVO(timer,Channel[timer]).ticks;
     if(SERVO(timer,Channel[timer]).Pin.isActive == true)     // check if activated
-      digitalWrite( SERVO(timer,Channel[timer]).Pin.nbr,HIGH); // its an active channel so pulse it high
+      digitalWrite( SERVO(timer,Channel[timer]).Pin.nbr,HIGH); // it's an active channel so pulse it high
   }
   else {
     // finished all channels so wait for the refresh period to expire before starting over
