@@ -1,6 +1,10 @@
 #define MAX_PWM_SERVOS             16
 
+#if ESP_IDF_VERSION_MAJOR < 5
 #define LEDC_MAX_BIT_WIDTH      SOC_LEDC_TIMER_BIT_WIDE_NUM
+#else
+#define LEDC_MAX_BIT_WIDTH      SOC_LEDC_TIMER_BIT_WIDTH
+#endif
 
 constexpr uint32_t BIT_RESOLUTION = (1 << LEDC_MAX_BIT_WIDTH) - 1;
 
