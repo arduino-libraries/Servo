@@ -71,6 +71,10 @@ jobs:
             platforms: |
               - name: arduino:mbed_nano
             artifact-name-suffix: arduino-mbed_nano-nanorp2040connect
+          - fqbn: arduino:esp32:nano_nora
+            platforms: |
+              - name: arduino:esp32
+            artifact-name-suffix: arduino-esp32-nano_nora
 
     steps:
       - name: Checkout repository
