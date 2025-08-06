@@ -79,8 +79,10 @@
 #include "xmc/ServoTimers.h"
 #elif defined(ARDUINO_ARCH_ESP32)
 #include "esp32/ServoTimers.h"
+#elif defined(ARDUINO_ARCH_PSOC6)
+#include "psoc6/ServoTimers.h"
 #else
-#error "This library only supports boards with an AVR, SAM, SAMD, NRF52, STM32F4, Renesas, XMC or ESP32 processor."
+#error "This library only supports boards with an AVR, SAM, SAMD, NRF52, STM32F4, Renesas, XMC, ESP32 or PSOC6 processor."
 #endif
 
 #define Servo_VERSION           2     // software version of this library
@@ -95,7 +97,7 @@
 
 #define INVALID_SERVO         255     // flag indicating an invalid servo index
 
-#if !defined(ARDUINO_ARCH_STM32F4) && !defined(ARDUINO_ARCH_XMC)
+#if !defined(ARDUINO_ARCH_STM32F4) && !defined(ARDUINO_ARCH_XMC) &&!defined(ARDUINO_ARCH_PSOC6)
 
 typedef struct  {
   uint8_t nbr        :6 ;             // a pin number from 0 to 63
