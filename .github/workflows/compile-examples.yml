@@ -75,6 +75,10 @@ jobs:
             platforms: |
               - name: arduino:esp32
             artifact-name-suffix: arduino-esp32-nano_nora
+          - fqbn: arduino:zephyr:unoq
+            platforms: |
+              - name: arduino:zephyr
+            artifact-name-suffix: arduino-zephyr-unoq
 
     steps:
       - name: Checkout repository
