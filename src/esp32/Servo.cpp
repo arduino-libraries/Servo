@@ -34,26 +34,42 @@
 
 class ServoImpl {
   uint8_t pin;
+  uint8_t channel;
 
 public:
-    ServoImpl(const uint8_t _pin, const uint8_t _channel) : pin(_pin) {
-      // Setup timer
+    ServoImpl(const uint8_t _pin, const uint8_t _channel) : pin(_pin), channel(_channel) {
+#if ESP_IDF_VERSION_MAJOR < 5
       ledcSetup(_channel, (1000000 / REFRESH_INTERVAL), LEDC_MAX_BIT_WIDTH);
-
-      // Attach timer to a LED pin
       ledcAttachPin(pin, _channel);
+#else
+      ledcAttachChannel(pin, (1000000 / REFRESH_INTERVAL), LEDC_MAX_BIT_WIDTH, channel);
+#endif
     }
 
     ~ServoImpl() {
+#if ESP_IDF_VERSION_MAJOR < 5
       ledcDetachPin(pin);
+#else
+      ledcDetach(pin);
+#endif
     }
 
-    void set(const uint8_t _channel, const uint32_t duration_us) {
-      ledcWrite(_channel, LEDC_US_TO_TICKS(duration_us));
+    void set(const uint32_t duration_us) {
+      ledcWrite(ref(), LEDC_US_TO_TICKS(duration_us));
     }
 
-    uint32_t get(const uint8_t _channel) const {
-      return LEDC_TICKS_TO_US(ledcRead(_channel));
+    uint32_t get() const {
+      return LEDC_TICKS_TO_US(ledcRead(ref()));
+    }
+
+private:
+    // read/write channel argument changed to pin between 4.x and 5.x
+    uint8_t ref() const {
+#if ESP_IDF_VERSION_MAJOR < 5
+      return channel;
+#else
+      return pin;
+#endif
     }
 };
 
@@ -121,7 +137,7 @@ void Servo::writeMicroseconds(int value)
     else if (value > SERVO_MAX())
       value = SERVO_MAX();
 
-    servos[this->servoIndex]->set(this->servoIndex, value);
+    servos[this->servoIndex]->set(value);
   }
 }
 
@@ -135,7 +151,7 @@ int Servo::readMicroseconds()
   if (!servos[this->servoIndex]) {
     return 0;
   }
-  return servos[this->servoIndex]->get(this->servoIndex);
+  return servos[this->servoIndex]->get();
 }
 
 bool Servo::attached()
