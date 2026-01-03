@@ -74,13 +74,14 @@ void Servo::detach()
 
 void Servo::write(int value)
 {
-	if (value < 0)
-		value = 0;
-	else if (value > 180)
-		value = 180;
-	value = map(value, 0, 180, MIN_PULSE, MAX_PULSE);
-
-	writeMicroseconds(value);
+	if(value < MIN_PULSE_WIDTH) {
+		if (value < 0)
+			value = 0;
+		else if (value > 180)
+			value = 180;
+		value = map(value, 0, 180, MIN_PULSE, MAX_PULSE);
+	}
+	this->writeMicroseconds(value);
 }
 
 
