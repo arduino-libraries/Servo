@@ -1,5 +1,6 @@
 #if defined(ARDUINO_ARCH_MBED)
 
+#include <chrono>
 #include <Arduino.h>
 #include <Servo.h>
 #include <mbed.h>
@@ -28,11 +29,11 @@ public:
 
     void start(uint32_t duration_us) {
       duration = duration_us;
-      ticker.attach(mbed::callback(this, &ServoImpl::call), 0.02f);
+      ticker.attach(mbed::callback(this, &ServoImpl::call), std::chrono::microseconds(REFRESH_INTERVAL));
     }
 
     void call() {
-        timeout.attach(mbed::callback(this, &ServoImpl::toggle), duration / 1e6);
+        timeout.attach(mbed::callback(this, &ServoImpl::toggle), std::chrono::microseconds(duration));
         toggle();
     }
 
