@@ -33,3 +33,4 @@ The potentiometer should be wired so that its two outer pins are connected to po
 * [analogRead()](https://www.arduino.cc/en/Reference/AnalogRead)
 * [Servo library reference](/docs/readme.md)
 * [Sweep](../Sweep) - Sweep the shaft of a servo motor back and forth
+* [SerialControl](../SerialControl) - Control the position of a servo using the Serial Monitor

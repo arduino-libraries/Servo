@@ -19,3 +19,4 @@ Servo motors have three wires: power, ground, and signal. The power wire is typi
 
 * [Knob](https://www.arduino.cc/en/Tutorial/Knob): control the shaft of a servo motor by turning a potentiometer
 * [Sweep](https://www.arduino.cc/en/Tutorial/LibraryExamples/Sweep): sweeps the shaft of a servo motor back and forth
+* [SerialControl](/examples/SerialControl): control the position of a servo motor using the Serial Monitor
