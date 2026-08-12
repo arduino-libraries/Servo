@@ -4,9 +4,18 @@
 #include <Servo.h>
 
 #if defined __has_include
+#  if __has_include ("esp_arduino_version.h")
+#    include "esp_arduino_version.h"
+#  endif
 #  if __has_include ("pinDefinitions.h")
 #    include "pinDefinitions.h"
 #  endif
+#endif
+
+#if defined(ESP_ARDUINO_VERSION_MAJOR) && ESP_ARDUINO_VERSION_MAJOR >= 3
+#define SERVO_ESP32_LEDC_PIN_API 1
+#else
+#define SERVO_ESP32_LEDC_PIN_API 0
 #endif
 
 /*
@@ -32,28 +41,64 @@
  ** ledc: 15 => Group: 1, Channel: 7, Timer: 3
  */
 
+static const uint32_t SERVO_PWM_FREQUENCY_HZ = 1000000 / REFRESH_INTERVAL;
+
 class ServoImpl {
   uint8_t pin;
+  uint8_t channel;
+  bool is_attached;
 
 public:
-    ServoImpl(const uint8_t _pin, const uint8_t _channel) : pin(_pin) {
-      // Setup timer
-      ledcSetup(_channel, (1000000 / REFRESH_INTERVAL), LEDC_MAX_BIT_WIDTH);
+    ServoImpl(const uint8_t _pin, const uint8_t _channel) :
+      pin(_pin),
+      channel(_channel),
+      is_attached(false)
+    {
+#if SERVO_ESP32_LEDC_PIN_API
+      is_attached = ledcAttachChannel(pin, SERVO_PWM_FREQUENCY_HZ, LEDC_MAX_BIT_WIDTH, channel);
+#else
+      ledcSetup(channel, SERVO_PWM_FREQUENCY_HZ, LEDC_MAX_BIT_WIDTH);
 
       // Attach timer to a LED pin
-      ledcAttachPin(pin, _channel);
+      ledcAttachPin(pin, channel);
+      is_attached = true;
+#endif
     }
 
     ~ServoImpl() {
+#if SERVO_ESP32_LEDC_PIN_API
+      if (is_attached) {
+        ledcDetach(pin);
+      }
+#else
       ledcDetachPin(pin);
+#endif
     }
 
-    void set(const uint8_t _channel, const uint32_t duration_us) {
-      ledcWrite(_channel, LEDC_US_TO_TICKS(duration_us));
+    bool attached() const {
+      return is_attached;
     }
 
-    uint32_t get(const uint8_t _channel) const {
-      return LEDC_TICKS_TO_US(ledcRead(_channel));
+    void set(const uint32_t duration_us) {
+      if (!is_attached) {
+        return;
+      }
+#if SERVO_ESP32_LEDC_PIN_API
+      ledcWrite(pin, LEDC_US_TO_TICKS(duration_us));
+#else
+      ledcWrite(channel, LEDC_US_TO_TICKS(duration_us));
+#endif
+    }
+
+    uint32_t get() const {
+      if (!is_attached) {
+        return 0;
+      }
+#if SERVO_ESP32_LEDC_PIN_API
+      return LEDC_TICKS_TO_US(ledcRead(pin));
+#else
+      return LEDC_TICKS_TO_US(ledcRead(channel));
+#endif
     }
 };
 
@@ -79,7 +124,25 @@ uint8_t Servo::attach(int pin)
 
 uint8_t Servo::attach(int pin, int min, int max)
 {
-  servos[this->servoIndex] = new ServoImpl(pin, this->servoIndex);
+  if (this->servoIndex == INVALID_SERVO) {
+    return INVALID_SERVO;
+  }
+
+  if (servos[this->servoIndex]) {
+    detach();
+  }
+
+  ServoImpl* servo = new ServoImpl(pin, this->servoIndex);
+  if (!servo) {
+    return INVALID_SERVO;
+  }
+
+  if (!servo->attached()) {
+    delete servo;
+    return INVALID_SERVO;
+  }
+
+  servos[this->servoIndex] = servo;
 
   this->min  = (MIN_PULSE_WIDTH - min);
   this->max  = (MAX_PULSE_WIDTH - max);
@@ -88,12 +151,20 @@ uint8_t Servo::attach(int pin, int min, int max)
 
 void Servo::detach()
 {
+  if (this->servoIndex == INVALID_SERVO) {
+    return;
+  }
+
   delete servos[this->servoIndex];
   servos[this->servoIndex] = NULL;
 }
 
 void Servo::write(int value)
 {
+  if (!attached()) {
+    return;
+  }
+
   // treat values less than 544 as angles in degrees (valid values in microseconds are handled as microseconds)
   if (value < MIN_PULSE_WIDTH)
   {
@@ -109,7 +180,7 @@ void Servo::write(int value)
 
 void Servo::writeMicroseconds(int value)
 {
-  if (!servos[this->servoIndex]) {
+  if (this->servoIndex == INVALID_SERVO || !servos[this->servoIndex]) {
     return;
   }
   // calculate and store the values for the given channel
@@ -121,25 +192,33 @@ void Servo::writeMicroseconds(int value)
     else if (value > SERVO_MAX())
       value = SERVO_MAX();
 
-    servos[this->servoIndex]->set(this->servoIndex, value);
+    servos[this->servoIndex]->set(value);
   }
 }
 
 int Servo::read() // return the value as degrees
 {
+  if (!attached()) {
+    return 0;
+  }
+
   return map(readMicroseconds(), SERVO_MIN(), SERVO_MAX(), 0, 180);
 }
 
 int Servo::readMicroseconds()
 {
-  if (!servos[this->servoIndex]) {
+  if (this->servoIndex == INVALID_SERVO || !servos[this->servoIndex]) {
     return 0;
   }
-  return servos[this->servoIndex]->get(this->servoIndex);
+  return servos[this->servoIndex]->get();
 }
 
 bool Servo::attached()
 {
+  if (this->servoIndex == INVALID_SERVO) {
+    return false;
+  }
+
   return servos[this->servoIndex] != NULL;
 }
 

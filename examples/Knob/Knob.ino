@@ -14,8 +14,18 @@ Servo myservo;  // create Servo object to control a servo
 int potpin = A0;  // analog pin used to connect the potentiometer
 int val;    // variable to read the value from the analog pin
 
+#if defined(ARDUINO_ARCH_CI13XX)
+#if defined(CI_CHIP_CI1302) || defined(CI_CHIP_CI1303)
+const int servoPin = PA5;  // PWM3; avoids PC4 amplifier control
+#else
+const int servoPin = PB3;  // PWM4 on CI1306
+#endif
+#else
+const int servoPin = 9;
+#endif
+
 void setup() {
-  myservo.attach(9);  // attaches the servo on pin 9 to the Servo object
+  myservo.attach(servoPin);  // attaches the servo to the Servo object
 }
 
 void loop() {

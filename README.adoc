@@ -9,5 +9,12 @@ image:https://github.com/{repository-owner}/{repository-name}/actions/workflows/
 
 This library allows an Arduino board to control RC (hobby) servo motors.
 
+== CI13XX support
+
+The CI1302, CI1303 and CI1306 backend uses the chip's six 50 Hz hardware PWM
+channels and integrates with the ChipIntelli Arduino core's peripheral resource
+manager. Only PWM-capable pins can be attached. See
+link:docs/ci13xx.md[CI13XX usage and wiring notes] for details.
+
 For more information about this library please visit us at
 https://www.arduino.cc/reference/en/libraries/servo/
