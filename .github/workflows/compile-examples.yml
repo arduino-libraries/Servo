@@ -79,6 +79,30 @@ jobs:
             platforms: |
               - name: arduino:zephyr
             artifact-name-suffix: arduino-zephyr-unoq
+          - fqbn: chipintelli:ci13xx:ci1302
+            platforms: |
+              - name: chipintelli:ci13xx
+                version: 1.0.10
+                source-url: https://github.com/coloz/arduino-ci130x/releases/download/v1.0.10/package_chipintelli_index.json
+            artifact-name-suffix: chipintelli-ci13xx-ci1302
+          - fqbn: chipintelli:ci13xx:ci1303
+            platforms: |
+              - name: chipintelli:ci13xx
+                version: 1.0.10
+                source-url: https://github.com/coloz/arduino-ci130x/releases/download/v1.0.10/package_chipintelli_index.json
+            artifact-name-suffix: chipintelli-ci13xx-ci1303
+          - fqbn: chipintelli:ci13xx:ci1306
+            platforms: |
+              - name: chipintelli:ci13xx
+                version: 1.0.10
+                source-url: https://github.com/coloz/arduino-ci130x/releases/download/v1.0.10/package_chipintelli_index.json
+            artifact-name-suffix: chipintelli-ci13xx-ci1306
+          - fqbn: chipintelli:ci13xx:ci_d06gt01d
+            platforms: |
+              - name: chipintelli:ci13xx
+                version: 1.0.10
+                source-url: https://github.com/coloz/arduino-ci130x/releases/download/v1.0.10/package_chipintelli_index.json
+            artifact-name-suffix: chipintelli-ci13xx-ci_d06gt01d
 
     steps:
       - name: Checkout repository
@@ -97,7 +121,9 @@ jobs:
             # See: https://github.com/arduino/compile-sketches#libraries
           sketch-paths: |
             - examples
-          enable-deltas-report: true
+          # The base revision predates CI13XX support, so it cannot provide a
+          # comparison build for those matrix entries.
+          enable-deltas-report: ${{ !startsWith(matrix.board.fqbn, 'chipintelli:') }}
           sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
 
       - name: Save sketches report as workflow artifact

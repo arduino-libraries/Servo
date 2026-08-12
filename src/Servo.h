@@ -79,10 +79,12 @@
 #include "xmc/ServoTimers.h"
 #elif defined(ARDUINO_ARCH_ESP32)
 #include "esp32/ServoTimers.h"
+#elif defined(ARDUINO_ARCH_CI13XX)
+#include "ci13xx/ServoTimers.h"
 #elif defined(ARDUINO_ARCH_ZEPHYR)
 #include "zephyr/ServoTimers.h"
 #else
-#error "This library only supports boards with an AVR, SAM, SAMD, NRF52, STM32F4, Renesas, XMC, ESP32 or Zephyr core."
+#error "This library only supports boards with an AVR, SAM, SAMD, NRF52, STM32F4, Renesas, XMC, ESP32, CI13XX or Zephyr core."
 #endif
 
 #define Servo_VERSION           2     // software version of this library
@@ -93,11 +95,15 @@
 #define REFRESH_INTERVAL    20000     // minimum time to refresh servos in microseconds
 
 #define SERVOS_PER_TIMER       12     // the maximum number of servos controlled by one timer
+#if defined(ARDUINO_ARCH_CI13XX)
+#define MAX_SERVOS   CI13XX_MAX_SERVOS
+#else
 #define MAX_SERVOS   (_Nbr_16timers  * SERVOS_PER_TIMER)
+#endif
 
 #define INVALID_SERVO         255     // flag indicating an invalid servo index
 
-#if !defined(ARDUINO_ARCH_STM32F4) && !defined(ARDUINO_ARCH_XMC)
+#if !defined(ARDUINO_ARCH_STM32F4) && !defined(ARDUINO_ARCH_XMC) && !defined(ARDUINO_ARCH_CI13XX)
 
 typedef struct  {
   uint8_t nbr        :6 ;             // a pin number from 0 to 63
