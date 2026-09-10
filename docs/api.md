@@ -44,7 +44,7 @@ void loop() {}
 
 Writes a value to the servo, controlling the shaft accordingly. On a standard servo, this will set the angle of the shaft. On a continuous rotation servo, this will set the speed of the servo (with 0 being full-speed in one direction, 180 being full speed in the other, and a value near 90 being no movement).
 
-On AVR, SAM, SAMD, megaAVR, mbed, ESP32, and XMC, `write()` accepts either an angle or a pulse width. Values below the architecture's minimum pulse-width threshold are interpreted as angles in the range 0–180, while values at or above the threshold are interpreted as pulse widths in microseconds. Zephyr, STM32F4, Renesas, and nRF52 interpret `write()` values exclusively as angles. Use `writeMicroseconds()` when specifying a pulse width explicitly.
+When the library is used with a board of the AVR, ESP32, Mbed, megaAVR, SAM, SAMD, or XMC architectures, the argument passed to the `write()` function will be interpreted as either an angle (in degrees) or a pulse width depending on the value. Values below the architecture's minimum pulse-width threshold are interpreted as angles in the range 0–180, while values at or above the threshold are interpreted as a pulse width in microseconds. When the library is used with a board of the nRF52, Renesas, STM32F4, or Zephyr architectures, the argument is always interpreted as an angle. Use `writeMicroseconds()` to specify a pulse width explicitly.
 
 #### Syntax
 
