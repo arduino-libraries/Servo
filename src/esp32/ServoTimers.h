@@ -1,6 +1,10 @@
 #define MAX_PWM_SERVOS             16
 
+#if defined(SOC_LEDC_TIMER_BIT_WIDTH)
+#define LEDC_MAX_BIT_WIDTH      SOC_LEDC_TIMER_BIT_WIDTH
+#else
 #define LEDC_MAX_BIT_WIDTH      SOC_LEDC_TIMER_BIT_WIDE_NUM
+#endif
 
 constexpr uint32_t BIT_RESOLUTION = (1 << LEDC_MAX_BIT_WIDTH) - 1;
 
