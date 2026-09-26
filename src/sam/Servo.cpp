@@ -47,27 +47,27 @@ static volatile int8_t Channel[_Nbr_16timers ];             // counter for the s
 /// Interrupt handler for the TC0 channel 1.
 //------------------------------------------------------------------------------
 void Servo_Handler(timer16_Sequence_t timer, Tc *pTc, uint8_t channel);
-#if defined (_useTimer1)
+#if defined(_useTimer1) && (_useTimer1)
 void HANDLER_FOR_TIMER1(void) {
     Servo_Handler(_timer1, TC_FOR_TIMER1, CHANNEL_FOR_TIMER1);
 }
 #endif
-#if defined (_useTimer2)
+#if defined(_useTimer2) && (_useTimer2)
 void HANDLER_FOR_TIMER2(void) {
     Servo_Handler(_timer2, TC_FOR_TIMER2, CHANNEL_FOR_TIMER2);
 }
 #endif
-#if defined (_useTimer3)
+#if defined(_useTimer3) && (_useTimer3)
 void HANDLER_FOR_TIMER3(void) {
     Servo_Handler(_timer3, TC_FOR_TIMER3, CHANNEL_FOR_TIMER3);
 }
 #endif
-#if defined (_useTimer4)
+#if defined(_useTimer4) && (_useTimer4)
 void HANDLER_FOR_TIMER4(void) {
     Servo_Handler(_timer4, TC_FOR_TIMER4, CHANNEL_FOR_TIMER4);
 }
 #endif
-#if defined (_useTimer5)
+#if defined(_useTimer5) && (_useTimer5)
 void HANDLER_FOR_TIMER5(void) {
     Servo_Handler(_timer5, TC_FOR_TIMER5, CHANNEL_FOR_TIMER5);
 }
@@ -126,23 +126,23 @@ static void _initISR(Tc *tc, uint32_t channel, uint32_t id, IRQn_Type irqn)
 
 static void initISR(timer16_Sequence_t timer)
 {
-#if defined (_useTimer1)
+#if defined(_useTimer1) && (_useTimer1)
     if (timer == _timer1)
         _initISR(TC_FOR_TIMER1, CHANNEL_FOR_TIMER1, ID_TC_FOR_TIMER1, IRQn_FOR_TIMER1);
 #endif
-#if defined (_useTimer2)
+#if defined(_useTimer2) && (_useTimer2)
     if (timer == _timer2)
         _initISR(TC_FOR_TIMER2, CHANNEL_FOR_TIMER2, ID_TC_FOR_TIMER2, IRQn_FOR_TIMER2);
 #endif
-#if defined (_useTimer3)
+#if defined(_useTimer3) && (_useTimer3)
     if (timer == _timer3)
         _initISR(TC_FOR_TIMER3, CHANNEL_FOR_TIMER3, ID_TC_FOR_TIMER3, IRQn_FOR_TIMER3);
 #endif
-#if defined (_useTimer4)
+#if defined(_useTimer4) && (_useTimer4)
     if (timer == _timer4)
         _initISR(TC_FOR_TIMER4, CHANNEL_FOR_TIMER4, ID_TC_FOR_TIMER4, IRQn_FOR_TIMER4);
 #endif
-#if defined (_useTimer5)
+#if defined(_useTimer5) && (_useTimer5)
     if (timer == _timer5)
         _initISR(TC_FOR_TIMER5, CHANNEL_FOR_TIMER5, ID_TC_FOR_TIMER5, IRQn_FOR_TIMER5);
 #endif
@@ -150,19 +150,19 @@ static void initISR(timer16_Sequence_t timer)
 
 static void finISR(timer16_Sequence_t timer)
 {
-#if defined (_useTimer1)
+#if defined(_useTimer1) && (_useTimer1)
     TC_Stop(TC_FOR_TIMER1, CHANNEL_FOR_TIMER1);
 #endif
-#if defined (_useTimer2)
+#if defined(_useTimer2) && (_useTimer2)
     TC_Stop(TC_FOR_TIMER2, CHANNEL_FOR_TIMER2);
 #endif
-#if defined (_useTimer3)
+#if defined(_useTimer3) && (_useTimer3)
     TC_Stop(TC_FOR_TIMER3, CHANNEL_FOR_TIMER3);
 #endif
-#if defined (_useTimer4)
+#if defined(_useTimer4) && (_useTimer4)
     TC_Stop(TC_FOR_TIMER4, CHANNEL_FOR_TIMER4);
 #endif
-#if defined (_useTimer5)
+#if defined(_useTimer5) && (_useTimer5)
     TC_Stop(TC_FOR_TIMER5, CHANNEL_FOR_TIMER5);
 #endif
 }
